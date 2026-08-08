@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.core.mail import send_mail
@@ -12,6 +14,7 @@ import secrets
 import uuid
 from . import forms
 from . import models
+from .models import UserProfile
 
 def generate_otp(email):
 
@@ -31,11 +34,16 @@ def generate_otp(email):
 
     return otp, otp_code
 
+
 @never_cache
 def signin(request):
 
     if request.user.is_authenticated:
-        return redirect("home")
+
+        if request.user.is_superuser:
+            return redirect("customadmin:dashboard")
+
+        return redirect("users:home")
 
     if request.method == "POST":
 
@@ -48,25 +56,62 @@ def signin(request):
             messages.error(request, "Invalid email or password.")
             return redirect("users:signin")
 
+        
+        if user.is_superuser:
+
+            user = authenticate(
+                request,
+                username=user.username,
+                password=password
+            )
+
+            if user is not None:
+                login(request, user)
+                return redirect("customadmin:dashboard")
+
+            messages.error(request, "Invalid email or password.")
+            return redirect("users:signin")
+
+        
+        try:
+            profile = user.profile
+        except UserProfile.DoesNotExist:
+            messages.error(request, "User profile not found.")
+            return redirect("users:signin")
+
+        if profile.blocked or not user.is_active:
+            messages.error(
+                request,
+                "Your account has been blocked. Please contact the administrator."
+            )
+            return redirect("users:signin")
+
         user = authenticate(
             request,
-            username=user.username,   
+            username=user.username,
             password=password
         )
 
         if user is not None:
+
             login(request, user)
-            messages.success(request, f"Welcome {user.first_name}!")
-            return redirect("home")
+
+            messages.success(
+                request,
+                f"Welcome {user.first_name}!"
+            )
+
+            return redirect("users:home")
 
         messages.error(request, "Invalid email or password.")
+        return redirect("users:signin")
 
     return render(request, "signin.html")
 
 @never_cache
 def signup(request):
     if request.user.is_authenticated:
-        return redirect("home")
+        return redirect("users:home")
 
     if request.method == "POST":
         form = forms.SignupForm(request.POST)
@@ -260,9 +305,32 @@ def resend_otp(request):
     messages.success(request, "A new OTP has been sent to your email.")
     return redirect("users:verify_otp")
 
+
 @never_cache
+@login_required
 def home(request):
+    if request.user.is_superuser:
+        return redirect("customadmin:dashboard")
+
+    try:
+        profile = request.user.profile
+    except UserProfile.DoesNotExist:
+        logout(request)
+        return redirect("users:signin")
+
+   
+    if profile.blocked or not request.user.is_active:
+        logout(request)
+        messages.error(
+            request,
+            "Your account has been blocked. Please contact the administrator."
+        )
+        return redirect("users:signin")
+
     return render(request, "home.html")
-
-
-
+@never_cache
+@login_required
+def logout_view(request):
+    logout(request)
+    messages.success(request, "You have been logged out successfully.")
+    return redirect("users:signin")

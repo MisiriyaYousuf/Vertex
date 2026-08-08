@@ -1,1 +1,13 @@
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert {{ message.tags }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
 <h2>HOME PAGE</h2>
+<h2>Welcome {{ request.user.first_name }}</h2>
+
+<a href="{% url 'users:logout' %}">
+    <button type="button">Logout</button>
+</a>
