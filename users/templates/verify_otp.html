@@ -1,76 +1,156 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vertex - email verification</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/verify_otp.css' %}">    
-    <link rel="stylesheet" href="{% static 'css/verify_otp.css' %}">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Verify OTP
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/signin.css' %}"
+    >
+
 </head>
+
 <body>
 
-<div class="container">
+<div class="login-container">
 
-    <div class="card">
+    <div class="login-card">
 
-        <h2>Email Verification</h2>
+        {% if verification_type == "signup" %}
 
-        <p class="subtitle">
-            We've sent a verification code to {{user.email}}.
-            Please enter the 6-digit OTP below.
-        </p>
+            <h3 style="text-align: center; margin-bottom: 25px;">
+                Verify Your Email
+            </h3>
 
-        <form method="POST" id="otpForm">
+        {% else %}
+
+            <h3 style="text-align: center; margin-bottom: 25px;">
+                Verify Email
+            </h3>
+
+        {% endif %}
+
+
+        {% if messages %}
+
+            {% for message in messages %}
+
+                <div class="alert {{ message.tags }}">
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+        <form method="POST">
+
             {% csrf_token %}
 
             <div class="form-group">
 
-                {% if messages %}
-                    {% for message in messages %}
-                        <div class="alert {{ message.tags }}">
-                            {{ message }}
-                        </div>
-                    {% endfor %}
-                {% endif %}
-
-                <label for="{{ form.otp.id_for_label }}">
-                    Verification Code
+                <label>
+                    Enter OTP
                 </label>
-                {{ form.otp }}
 
-                {% if form.otp.errors %}
-                    <small class="error">
-                        {{ form.otp.errors.0 }}
-                    </small>
-                {% endif %}
+                <input
+                    type="text"
+                    name="otp"
+                    maxlength="6"
+                    minlength="6"
+                    inputmode="numeric"
+                    placeholder="Enter 6 digit OTP"
+                    required
+                >
 
             </div>
 
-           <div class="otp-timer" id="otpTimer">
-            OTP expires in <span id="countdown">02:00</span>
+            <div
+                id="otp-timer"
+                data-expires-at="{{ expires_at|date:'c' }}"
+                style="
+                    text-align:center;
+                    margin:15px 0;
+                    font-weight:bold;
+                ">
+                OTP expires in
+
+                <span id="countdown">
+                    01:00
+                </span>
             </div>
-            <button type="submit">
+
+
+            <button
+                type="submit"
+                id="verify-button"
+            >
                 Verify OTP
             </button>
+
         </form>
 
-        <div class="footer">
+        <div
+            id="resend-section"
+            style="
+                text-align:center;
+                margin-top:20px;
+                display:none;
+            "
+        >
+
             <p>
-                Didn't receive the code?
+                Didn't receive the OTP?
             </p>
-            <a class="btn btn-primary" href="{% url 'users:resend_otp' %}" style="text-decoration: none; color :white;">
+
+            <a href="{% url 'users:resend_otp' %}"  class="signup-text" style="text-decoration: none;">
                 Resend OTP
             </a>
+
         </div>
+
+
+        {% if verification_type == "signup" %}
+
+            <p class="signup-text">
+
+                Already have an account?
+
+                <a href="{% url 'users:signin' %}">
+                    Sign In
+                </a>
+
+            </p>
+
+        {% else %}
+
+            <p class="signup-text">
+
+                <a href="{% url 'users:forgot_password' %}">
+                    Change Email
+                </a>
+
+            </p>
+
+        {% endif %}
+
 
     </div>
 
 </div>
-<script>
-    const otpExpiresAt = "{{ expires_at|date:'c' }}";
-</script>
 <script src="{% static 'js/verify_otp.js' %}"></script>
 </body>
 </html>

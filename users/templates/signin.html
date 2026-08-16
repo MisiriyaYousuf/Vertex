@@ -45,7 +45,16 @@
                     required
                 >
             </div>
+            <div style="text-align: right; margin-top: 8px;">
+           
+            <a href="{% url 'users:forgot_password' %}"
+            onclick="window.location.replace(this.href); return false;"
+            style="text-decoration: none; color: #0d6efd;">
+                Forgot Password?
+            </a>
 
+            </div>
+            <br>
             <button type="submit">Sign In</button>
 
         </form>

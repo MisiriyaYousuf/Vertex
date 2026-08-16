@@ -15,7 +15,7 @@
 <body>
   <div class="signup-card" role="main" aria-label="Sign up form">
     <div class="signup-header">
-      <h2> Create account</h2>
+      <h2>Create Account</h2>
     </div>
 
     <form id="signupForm" novalidate method="post" action="{% url 'users:signup' %}">
@@ -71,47 +71,6 @@
               </div>
               {% endif %}
           </div>
-
-          <div class="field-group" id="field-city">
-              <label for="id_city">
-                  <i class="fas fa-city"></i> City
-              </label>
-
-              <input
-                  type="text"
-                  id="id_city"
-                  name="city"
-                  placeholder="City"
-                  value="{{ form.city.value|default_if_none:'' }}"
-                  required>
-
-              {% if form.city.errors %}
-              <div class="error-text">
-                  {{ form.city.errors.0 }}
-              </div>
-              {% endif %}
-          </div>
-
-          <div class="field-group" id="field-country">
-              <label for="id_country">
-                  <i class="fas fa-globe"></i> Country
-              </label>
-
-              <input
-                  type="text"
-                  id="id_country"
-                  name="country"
-                  placeholder="Country"
-                  value="{{ form.country.value|default_if_none:'' }}"
-                  required>
-
-              {% if form.country.errors %}
-              <div class="error-text">
-                  {{ form.country.errors.0 }}
-              </div>
-              {% endif %}
-          </div>
-
       </div>
 
       <br>
@@ -162,33 +121,8 @@
           {% endif %}
 
       </div>
-
       <br>
-
-      <!-- Address -->
-      <div class="field-group full-width" id="field-address">
-
-          <label for="id_address">
-              <i class="fas fa-home"></i> Address
-          </label>
-
-          <textarea
-              id="id_address"
-              name="address"
-              rows="3"
-              placeholder="Enter your full address"
-              required>{{ form.address.value|default_if_none:'' }}</textarea>
-
-          {% if form.address.errors %}
-          <div class="error-text">
-              {{ form.address.errors.0 }}
-          </div>
-          {% endif %}
-
-      </div>
-
-      <br>
-
+      
       <!-- Password -->
       <div class="field-group" id="field-password1">
 
@@ -240,7 +174,7 @@
           {% endif %}
 
       </div>
-
+      <br>
       <button type="submit" class="btn-submit" id="submitBtn">
         <i class="fas fa-arrow-right-to-bracket"></i> Register
       </button>

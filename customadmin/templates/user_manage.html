@@ -25,18 +25,21 @@ User Management
         </p>
     </div>
 
-    <span class="badge bg-dark" style="font-size: 15px;">
+    <button
+        type="button"
+        style="font-size: 15px; background-color: #315170; color: white; border:none"
+    >
         Total Users : {{ profiles|length }}
-    </span>
+    </button>
 
 </div>
+
 
 <div class="user-table-wrapper">
 
     <table class="table table-hover">
 
         <thead>
-
             <tr>
                 <th>Sl.no</th>
                 <th>Username</th>
@@ -46,7 +49,6 @@ User Management
                 <th>Status</th>
                 <th>Action</th>
             </tr>
-
         </thead>
 
 
@@ -56,11 +58,13 @@ User Management
 
             <tr>
 
+                <!-- Sl.no -->
                 <td>
                     {{ forloop.counter }}
                 </td>
 
 
+                <!-- Username -->
                 <td>
                     <strong>
                         {{ profile.user.username }}
@@ -68,21 +72,25 @@ User Management
                 </td>
 
 
+                <!-- Email -->
                 <td>
                     {{ profile.user.email }}
                 </td>
 
 
+                <!-- Phone -->
                 <td>
                     {{ profile.phone }}
                 </td>
 
 
+                <!-- Joined -->
                 <td>
                     {{ profile.user.date_joined|date:"M d, Y" }}
                 </td>
 
 
+                <!-- Status -->
                 <td>
 
                     {% if profile.blocked %}
@@ -102,17 +110,25 @@ User Management
                 </td>
 
 
+                <!-- Action -->
                 <td>
 
                     {% if profile.blocked %}
 
+                        <!-- UNBLOCK -->
                         <form
                             method="POST"
-                            action="{% url 'customadmin:unblock_user' profile.id %}"
+                            action="{% url 'customadmin:unblock_user' %}"
                             style="display:inline;"
                         >
 
                             {% csrf_token %}
+
+                            <input
+                                type="hidden"
+                                name="profile_id"
+                                value="{{ profile.id }}"
+                            >
 
                             <button
                                 type="submit"
@@ -125,13 +141,20 @@ User Management
 
                     {% else %}
 
+                        <!-- BLOCK -->
                         <form
                             method="POST"
-                            action="{% url 'customadmin:block_user' profile.id %}"
+                            action="{% url 'customadmin:block_user' %}"
                             style="display:inline;"
                         >
 
                             {% csrf_token %}
+
+                            <input
+                                type="hidden"
+                                name="profile_id"
+                                value="{{ profile.id }}"
+                            >
 
                             <button
                                 type="submit"

@@ -5,9 +5,6 @@ class UserProfile(models.Model):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE,related_name='profile')
     phone = models.CharField(max_length=15, blank=False, null=False,unique=True)
-    address = models.TextField(max_length=500, blank=False, null=False, default='')
-    city = models.CharField(max_length=100, blank=False, null=False)
-    country = models.CharField(max_length=100, blank=False, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     blocked = models.BooleanField(default=False)
@@ -16,6 +13,7 @@ class UserProfile(models.Model):
         return f"{self.user.first_name} {self.user.last_name}'s Profile"
 
 class OTP(models.Model):
+   
     email = models.EmailField()
     otp_hash = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)

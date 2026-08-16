@@ -1,0 +1,578 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <link rel="icon" href="{% static 'images/fevicon/fevicon.png' %}" type="image/gif" />
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>{% block title %}Vertex{% endblock %}</title>
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <link href="{% static 'css/style.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/responsive.css' %}" rel="stylesheet" />
+    
+    {% block extra_css %}{% endblock %}
+    
+    <style>
+        :root {
+            --primary-color: #582e79;
+            --primary-light: #7a4a9e;
+            --primary-dark: #3d1f54;
+            --secondary-color: #e8dfec;
+            --accent-color: #9477aa;
+            --bg-light: #f5f0f8;
+            --bg-body: #ddd9e4cc;
+            --text-dark: #2d1b3d;
+            --text-light: #ffffff;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            font-family: 'Roboto', sans-serif;
+            color: var(--text-dark);
+            min-height: 150vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+    
+        .main-content {
+            flex: 1;
+            padding: 0px 0;
+        }
+
+        
+        .navbar-main {
+            background-color: var(--primary-color);
+            padding: 10px 20px;
+            box-shadow: 0 2px 10px rgba(88, 46, 121, 0.3);
+        }
+
+        .navbar-main .navbar-brand {
+            color: var(--text-light) !important;
+            font-weight: 500;
+            font-size: 1 rem;
+            letter-spacing: 1px;
+        }
+
+        .navbar-main .navbar-brand:hover {
+            color: var(--secondary-color) !important;
+        }
+
+        .navbar-main .nav-link {
+            color: var(--text-light) !important;
+            font-weight: 500;
+            padding: 8px 16px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .navbar-main .nav-link:hover {
+            color: var(--secondary-color) !important;
+            transform: translateY(-1px);
+        }
+
+        .navbar-main .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--secondary-color);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .navbar-main .nav-link:hover::after {
+            width: 70%;
+        }
+
+        .navbar-main .nav-link.active::after {
+            width: 70%;
+        }
+
+        
+        .badge-cart {
+            background-color: var(--danger-color);
+            color: var(--text-light);
+            border-radius: 50%;
+            padding: 2px 8px;
+            font-size: 11px;
+            position: relative;
+            top: -8px;
+            right: 5px;
+        }
+
+        
+        .sub-navbar {
+            background-color: var(--secondary-color);
+            padding: 8px 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .sub-navbar .nav-link {
+            color: var(--primary-color);
+            font-weight: 500;
+            padding: 6px 10px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .sub-navbar .nav-link:hover {
+            color: var(--primary-light);
+            transform: translateY(-1px);
+        }
+
+        .sub-navbar .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 1px;
+            background: var(--primary-color);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .sub-navbar .nav-link:hover::after {
+            width: 50%;
+        }
+
+        
+        .error-messages h6 {
+            margin: 0;
+            padding: 8px 16px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+        }
+
+        .footer {
+            background-color: var(--primary-dark);
+            color: var(--text-light);
+            padding: 40px 0 20px;
+            margin-top: auto;
+        }
+
+        .footer h5 {
+            color: var(--secondary-color);
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .footer a {
+            color: #adb5bd;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer a:hover {
+            color: var(--text-light);
+        }
+
+        .footer .social-icons a {
+            font-size: 1.5rem;
+            margin: 0 10px;
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+
+        .footer .social-icons a:hover {
+            transform: translateY(-3px);
+            color: var(--secondary-color);
+        }
+
+        .newsletter-input {
+            max-width: 400px;
+            border-radius: 25px;
+            padding: 10px 20px;
+        }
+
+        .footer .btn-primary {
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: 25px;
+            padding: 10px 30px;
+            transition: all 0.3s ease;
+        }
+
+        .footer .btn-primary:hover {
+            background-color: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(88, 46, 121, 0.4);
+        }
+
+        
+        #toastContainer {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+
+        .toast {
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            min-width: 300px;
+            animation: slideInRight 0.5s ease;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Sign out button styling */
+        .signout-btn {
+            color: var(--text-light) !important;
+            font-weight: 500;
+            padding: 8px 16px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .signout-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-1px);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        @media (max-width: 991px) {
+            .navbar-main .navbar-collapse {
+                background: var(--primary-color);
+                padding: 15px;
+                border-radius: 10px;
+                margin-top: 10px;
+            }
+            
+            .sub-navbar .navbar-nav {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .sub-navbar .nav-link::after {
+                display: none;
+            }
+
+            .signout-btn {
+                margin-top: 5px;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .footer .social-icons a {
+                margin: 0 5px;
+                font-size: 1.2rem;
+            }
+            
+            .newsletter-input {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header Section -->
+    <header class="header_section">
+        <!-- Main Navbar -->
+        <nav class="navbar navbar-main navbar-expand-lg">
+            <div class="container-fluid px-3">
+                <a class="navbar-brand" href="{% url 'users:home' %}">
+                    <i class="fas fa-clock me-2"></i>Vertex
+                </a>    
+                <!-- Messages -->
+                <div class="mx-auto text-center d-none d-lg-block">
+                    {% if messages %}
+                        <div class="error-messages">
+                            {% for message in messages %}
+                                <h6 class="alert alert-{{ message.tags }} alert-dismissible fade show mb-0" style="background: rgba(255,255,255,0.15); color: white; border: none; padding: 5px 15px; border-radius: 20px;">
+                                    {{ message }}
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" style="font-size: 10px;"></button>
+                                </h6>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'home' %}{% endif %}" href="{% url 'users:home' %}">
+                                <i class="fas fa-home me-1"></i>Home
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'products' %}active{% endif %}" href="#">
+                                <i class="fas fa-box me-1"></i>Products
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'cart' %}active{% endif %}" href="#">
+                                <i class="fas fa-shopping-cart me-1"></i>Cart
+                                <span class="badge badge-cart" id="cartCount">{{ user.cart.get_item_count|default:0 }}</span>
+                            </a>
+                        </li>
+                       
+                        <!-- Check if user is authenticated -->
+                        {% if user.is_authenticated %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link d-flex align-items-center text-decoration-none" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    {% if user.profile.profile_picture %}
+                                        <img src="{{ user.profile.profile_picture.url }}" alt="Profile" class="rounded-circle" style="width: 35px; height: 35px; object-fit: cover; border: 2px solid white;">
+                                    {% else %}
+                                        <i class="fas fa-user-circle fa-2x" style="color: white;"></i>
+                                    {% endif %}
+                                    <span class="ms-2 d-none d-lg-inline">{{ user.first_name|default:user.username }}</span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown" style="min-width: 200px;">
+                                    <li>
+                                        <a class="dropdown-item" href="#">
+                                            <i class="fas fa-user me-2"></i>My Profile
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="#">
+                                            <i class="fas fa-map-marker-alt me-2"></i>My Addresses
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="#">
+                                            <i class="fas fa-history me-2"></i>Order History
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <!-- Sign Out Button -->
+                                        <form method="POST" action="{% url 'users:logout' %}" class="dropdown-item p-0">
+                                            {% csrf_token %}
+                                            <button type="submit" class="dropdown-item" style="color: var(--danger-color);">
+                                                <i class="fas fa-sign-out-alt me-2"></i>Sign Out
+                                            </button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </li>
+                        {% else %}
+                            <!-- Show Sign In button if not authenticated -->
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'users:signin' %}">
+                                    <i class="fas fa-sign-in-alt me-1"></i>Sign In
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Sub Navbar -->
+        <nav class="sub-navbar navbar navbar-expand-lg">
+            <div class="container-fluid">
+                <ul class="navbar-nav mx-auto flex-wrap">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="fas fa-watch me-1"></i>Casual Watches
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="fas fa-user-tie me-1"></i>Formal Watches
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="fas fa-gem me-1"></i>Premium Watches
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="fas fa-star me-1"></i>Limited Editions
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        {% block content %}
+        <!-- Page specific content goes here -->
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <!-- About Section -->
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <h5><i class="fas fa-clock me-2"></i>About</h5>
+                    <p>Signature Seconds is an online men's wristwatch store specializing in premium, stylish, and functional wrist watches.</p>
+                </div>
+                
+                <!-- Contact Section -->
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <h5><i class="fas fa-envelope me-2"></i>Contact</h5>
+                    <p><i class="fas fa-envelope me-2"></i>contact@signatureseconds.com</p>
+                    <p><i class="fas fa-phone me-2"></i>+123 456 7890</p>
+                    <div class="social-icons mt-3">
+                        <a href="#" class="text-light"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-light"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-light"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-light"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                
+                <!-- Newsletter Section -->
+                <div class="col-md-4">
+                    <h5><i class="fas fa-newspaper me-2"></i>Newsletter</h5>
+                    <p>Subscribe to our newsletter for updates on new arrivals and exclusive offers.</p>
+                    <form id="newsletterForm">
+                        <div class="input-group mb-3">
+                            <input type="email" class="form-control newsletter-input" placeholder="Enter your email" required>
+                            <button class="btn btn-primary" type="submit">Subscribe</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <hr class="bg-light opacity-25">
+            
+            <div class="text-center">
+                <p class="mb-0">
+                    &copy; <span id="displayYear"></span> All Rights Reserved By
+                    <a href="{% url 'users:home' %}"><strong>Vertex</strong></a>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Container -->
+    <div id="toastContainer"></div>
+
+    <!-- Scripts -->
+    <script type="text/javascript" src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="{% static 'js/bootstrap.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" src="{% static 'js/custom.js' %}"></script>
+    
+    {% block extra_js %}{% endblock %}
+    
+    <script>
+        
+        function getCSRFToken() {
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                const [name, value] = cookie.trim().split('=');
+                if (name === 'csrftoken') {
+                    return value;
+                }
+            }
+            return null;
+        }
+
+        // Toast notification
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            if (!container) {
+                console.error('Toast container not found');
+                return;
+            }
+            
+            const toast = document.createElement('div');
+            const bgColor = type === 'success' ? 'bg-success' : type === 'error' ? 'bg-danger' : 'bg-info';
+            const icon = type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle';
+            
+            toast.className = `toast show align-items-center text-white ${bgColor} border-0`;
+            toast.role = 'alert';
+            toast.style.marginBottom = '10px';
+            toast.style.minWidth = '300px';
+            toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <i class="fas ${icon} me-2"></i>
+                        ${message}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            `;
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.remove();
+                }
+            }, 4000);
+        }
+
+        // Update cart count
+        function updateCartCount(count) {
+            document.querySelectorAll('.badge-cart').forEach(badge => {
+                badge.textContent = count;
+            });
+        }
+
+        // Current year
+        document.getElementById('displayYear').textContent = new Date().getFullYear();
+
+        // Newsletter form
+        document.getElementById('newsletterForm')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = this.querySelector('input[type="email"]').value;
+            if (email) {
+                showToast('Thank you for subscribing!', 'success');
+                this.reset();
+            }
+        });
+
+        // Sign out confirmation (optional)
+        document.querySelectorAll('form[action*="signout"]').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                if (!confirm('Are you sure you want to sign out?')) {
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
