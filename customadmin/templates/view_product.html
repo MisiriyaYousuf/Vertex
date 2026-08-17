@@ -1,0 +1,701 @@
+{% extends 'admin_base.html' %}
+{% load static %}
+
+{% block title %}View Product - Admin Panel{% endblock %}
+
+{% block navbar_icon %}box{% endblock %}
+{% block navbar_title %}Product Details{% endblock %}
+
+
+{% block extra_css %}
+
+<style>
+
+    .product-detail-wrapper {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+    }
+
+    .product-header {
+        padding: 20px 24px;
+        border-bottom: 1px solid #dee2e6;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .product-header h4 {
+        margin: 0;
+        color: #2c3e50;
+        font-weight: 600;
+    }
+
+    .section-title {
+        font-size: 17px;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 18px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .product-image-main {
+        width: 100%;
+        max-width: 420px;
+        height: 420px;
+        object-fit: contain;
+        border-radius: 10px;
+        border: 1px solid #dee2e6;
+        background: #f8f9fa;
+    }
+
+    .product-image-placeholder {
+        width: 100%;
+        max-width: 420px;
+        height: 420px;
+        border-radius: 10px;
+        border: 1px solid #dee2e6;
+        background: #f8f9fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #adb5bd;
+        font-size: 50px;
+    }
+
+    .product-gallery {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .gallery-image {
+        width: 75px;
+        height: 75px;
+        object-fit: cover;
+        border-radius: 6px;
+        border: 1px solid #dee2e6;
+        padding: 2px;
+        background: #fff;
+    }
+
+    .gallery-image.main {
+        border: 2px solid #212529;
+    }
+
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 11px 0;
+        border-bottom: 1px solid #f0f0f0;
+        gap: 20px;
+    }
+
+    .detail-row:last-child {
+        border-bottom: none;
+    }
+
+    .detail-label {
+        color: #6c757d;
+        font-weight: 500;
+    }
+
+    .detail-value {
+        color: #212529;
+        font-weight: 500;
+        text-align: right;
+    }
+
+    .price-current {
+        font-size: 22px;
+        font-weight: 700;
+        color: #198754;
+    }
+
+    .price-old {
+        color: #6c757d;
+        text-decoration: line-through;
+        margin-left: 8px;
+    }
+
+    .status-badge {
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .status-active {
+        background: #d1e7dd;
+        color: #0f5132;
+    }
+
+    .status-inactive {
+        background: #f8d7da;
+        color: #842029;
+    }
+
+    .featured-badge {
+        background: #fff3cd;
+        color: #664d03;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .variant-card {
+        border: 1px solid #dee2e6;
+        border-radius: 9px;
+        padding: 18px;
+        height: 100%;
+        background: #fff;
+    }
+
+    .variant-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 15px;
+    }
+
+    .variant-detail {
+        margin-bottom: 8px;
+        font-size: 14px;
+    }
+
+    .variant-detail strong {
+        color: #6c757d;
+        font-weight: 500;
+    }
+
+    .variant-images {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 12px;
+    }
+
+    .variant-image {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+    }
+
+    .stock-badge {
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .stock-in {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .stock-out {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .description-box {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 7px;
+        line-height: 1.7;
+        color: #495057;
+    }
+
+</style>
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="product-detail-wrapper">
+
+    <!-- Header -->
+
+    <div class="product-header">
+
+        <div>
+            <h4>
+                <i class="fas fa-clock me-2"></i>
+                {{ product.name }}
+            </h4>
+
+            <small class="text-muted">
+                Product ID: #{{ product.id }}
+            </small>
+        </div>
+
+        <div class="d-flex gap-2">
+
+            <a
+                href="{% url 'customadmin:edit_product' product.id %}"
+                class="btn btn-primary btn-sm"
+            >
+                <i class="fas fa-edit me-1"></i>
+                Edit Product
+            </a>
+
+            <a
+                href="{% url 'customadmin:list_product' %}"
+                class="btn btn-secondary btn-sm"
+            >
+                <i class="fas fa-arrow-left me-1"></i>
+                Back
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <div class="p-4">
+
+        <!-- Product Basic Information -->
+
+        <div class="row g-4">
+
+            <!-- Images -->
+
+            <div class="col-lg-5">
+
+                {% if product.main_image %}
+
+                    <img
+                        src="{{ product.main_image.image.url }}"
+                        alt="{{ product.name }}"
+                        class="product-image-main"
+                    >
+
+                {% else %}
+
+                    <div class="product-image-placeholder">
+                        <i class="fas fa-image"></i>
+                    </div>
+
+                {% endif %}
+
+
+                <!-- Gallery -->
+
+                {% if product.images.all %}
+
+                    <div class="product-gallery">
+
+                        {% for image in product.images.all %}
+
+                            <img
+                                src="{{ image.image.url }}"
+                                alt="{{ product.name }}"
+                                class="gallery-image {% if product.main_image.id == image.id %}main{% endif %}"
+                            >
+
+                        {% endfor %}
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- Product Information -->
+
+            <div class="col-lg-7">
+
+                <div class="section-title">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Product Information
+                </div>
+
+
+                <div class="detail-row">
+
+                    <span class="detail-label">
+                        Product Name
+                    </span>
+
+                    <span class="detail-value">
+                        {{ product.name }}
+                    </span>
+
+                </div>
+
+
+                <div class="detail-row">
+
+                    <span class="detail-label">
+                        Category
+                    </span>
+
+                    <span class="detail-value">
+                        {{ product.category.name }}
+                    </span>
+
+                </div>
+
+
+                <div class="detail-row">
+
+                    <span class="detail-label">
+                        Sale Price
+                    </span>
+
+                    <span class="detail-value price-current">
+                        ₹{{ product.sale_price|floatformat:2 }}
+
+                        {% if product.discount_price %}
+                            <span class="price-old">
+                                ₹{{ product.discount_price|floatformat:2 }}
+                            </span>
+                        {% endif %}
+
+                    </span>
+
+                </div>
+
+
+                <div class="detail-row">
+
+                    <span class="detail-label">
+                        Available Quantity
+                    </span>
+
+                    <span class="detail-value">
+
+                        {% if product.quantity > 0 %}
+
+                            <span class="stock-badge stock-in">
+                                <i class="fas fa-check-circle me-1"></i>
+                                {{ product.quantity }} In Stock
+                            </span>
+
+                        {% else %}
+
+                            <span class="stock-badge stock-out">
+                                <i class="fas fa-times-circle me-1"></i>
+                                Out of Stock
+                            </span>
+
+                        {% endif %}
+
+                    </span>
+
+                </div>
+
+
+                <div class="detail-row">
+
+                    <span class="detail-label">
+                        Coupon Code
+                    </span>
+
+                    <span class="detail-value">
+
+                        {% if product.coupon_code %}
+                            {{ product.coupon_code }}
+                        {% else %}
+                            <span class="text-muted">
+                                No coupon
+                            </span>
+                        {% endif %}
+
+                    </span>
+
+                </div>
+
+
+                <div class="detail-row">
+
+                    <span class="detail-label">
+                        Product Status
+                    </span>
+
+                    <span class="detail-value">
+
+                        {% if product.is_active %}
+
+                            <span class="status-badge status-active">
+                                Active
+                            </span>
+
+                        {% else %}
+
+                            <span class="status-badge status-inactive">
+                                Inactive
+                            </span>
+
+                        {% endif %}
+
+                    </span>
+
+                </div>
+
+
+                <div class="detail-row">
+
+                    <span class="detail-label">
+                        Featured
+                    </span>
+
+                    <span class="detail-value">
+
+                        {% if product.featured %}
+
+                            <span class="featured-badge">
+                                <i class="fas fa-star me-1"></i>
+                                Featured
+                            </span>
+
+                        {% else %}
+
+                            <span class="text-muted">
+                                No
+                            </span>
+
+                        {% endif %}
+
+                    </span>
+
+                </div>
+
+
+                <div class="detail-row">
+
+                    <span class="detail-label">
+                        Created
+                    </span>
+
+                    <span class="detail-value">
+                        {{ product.created_at|date:"d M Y, h:i A" }}
+                    </span>
+
+                </div>
+
+
+                <div class="detail-row">
+
+                    <span class="detail-label">
+                        Last Updated
+                    </span>
+
+                    <span class="detail-value">
+                        {{ product.updated_at|date:"d M Y, h:i A" }}
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Description -->
+
+        <div class="mt-4">
+
+            <div class="section-title">
+                <i class="fas fa-align-left me-2"></i>
+                Product Description
+            </div>
+
+            <div class="description-box">
+                {{ product.description|linebreaks }}
+            </div>
+
+        </div>
+
+
+        <!-- Variants -->
+
+        <div class="mt-4">
+
+            <div class="section-title">
+
+                <i class="fas fa-layer-group me-2"></i>
+
+                Watch Variants
+
+                <span class="badge bg-dark ms-2">
+                    {{ variants|length }}
+                </span>
+
+            </div>
+
+
+            {% if variants %}
+
+                <div class="row g-3">
+
+                    {% for variant in variants %}
+
+                        <div class="col-lg-6">
+
+                            <div class="variant-card">
+
+                                <div class="d-flex justify-content-between">
+
+                                    <div class="variant-title">
+
+                                        <i class="fas fa-stopwatch me-2"></i>
+
+                                        Variant {{ forloop.counter }}
+
+                                    </div>
+
+
+                                    {% if variant.is_active %}
+
+                                        <span class="status-badge status-active">
+                                            Active
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="status-badge status-inactive">
+                                            Inactive
+                                        </span>
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <div class="variant-detail">
+
+                                    <strong>Color:</strong>
+
+                                    {% if variant.color %}
+                                        {{ variant.color }}
+                                    {% else %}
+                                        <span class="text-muted">
+                                            Not specified
+                                        </span>
+                                    {% endif %}
+
+                                </div>
+
+
+                                <div class="variant-detail">
+
+                                    <strong>Case Size:</strong>
+
+                                    {% if variant.size %}
+                                        {{ variant.size }}
+                                    {% else %}
+                                        <span class="text-muted">
+                                            Not specified
+                                        </span>
+                                    {% endif %}
+
+                                </div>
+
+
+                                <div class="variant-detail">
+
+                                    <strong>SKU:</strong>
+
+                                    {% if variant.sku %}
+                                        {{ variant.sku }}
+                                    {% else %}
+                                        <span class="text-muted">
+                                            No SKU
+                                        </span>
+                                    {% endif %}
+
+                                </div>
+
+
+                                <div class="variant-detail">
+
+                                    <strong>Quantity:</strong>
+
+                                    {% if variant.quantity > 0 %}
+
+                                        <span class="stock-badge stock-in">
+                                            {{ variant.quantity }} In Stock
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="stock-badge stock-out">
+                                            Out of Stock
+                                        </span>
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <!-- Variant Images -->
+
+                                {% if variant.images.all %}
+
+                                    <div class="mt-3">
+
+                                        <strong class="text-muted">
+                                            Variant Images:
+                                        </strong>
+
+                                        <div class="variant-images">
+
+                                            {% for image in variant.images.all %}
+
+                                                <img
+                                                    src="{{ image.image.url }}"
+                                                    alt="{{ variant.color }} {{ variant.size }}"
+                                                    class="variant-image"
+                                                >
+
+                                            {% endfor %}
+
+                                        </div>
+
+                                    </div>
+
+                                {% else %}
+
+                                    <small class="text-muted">
+                                        No variant-specific images
+                                    </small>
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="alert alert-info">
+
+                    <i class="fas fa-info-circle me-2"></i>
+
+                    This watch does not have any variants.
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -15,6 +15,7 @@ import uuid
 from . import forms
 from . import models
 from .models import UserProfile
+from products.models import Product
 
 def generate_otp(email):
 
@@ -559,7 +560,6 @@ def home(request):
         logout(request)
         return redirect("users:signin")
 
-   
     if profile.blocked or not request.user.is_active:
         logout(request)
         messages.error(
@@ -568,7 +568,19 @@ def home(request):
         )
         return redirect("users:signin")
 
-    return render(request, "home.html")
+    # Get active, non-deleted products
+    products = Product.objects.filter(
+        is_deleted=False,
+        is_active=True
+    ).select_related(
+        "category",
+        "main_image"
+    ).order_by("-id")
+
+    return render(request, "home.html", {
+        "products": products
+    })
+
 @never_cache
 @login_required
 def logout_view(request):

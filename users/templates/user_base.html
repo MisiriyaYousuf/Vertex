@@ -339,7 +339,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {% if request.resolver_match.url_name == 'products' %}active{% endif %}" href="#">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'products' %}active{% endif %}" href="{% url 'products:products' %}">
                                 <i class="fas fa-box me-1"></i>Products
                             </a>
                         </li>
@@ -445,13 +445,13 @@
                 <!-- About Section -->
                 <div class="col-md-4 mb-4 mb-md-0">
                     <h5><i class="fas fa-clock me-2"></i>About</h5>
-                    <p>Signature Seconds is an online men's wristwatch store specializing in premium, stylish, and functional wrist watches.</p>
+                    <p>Vertex is an online men's wristwatch store specializing in premium, stylish, and functional wrist watches.</p>
                 </div>
                 
                 <!-- Contact Section -->
                 <div class="col-md-4 mb-4 mb-md-0">
                     <h5><i class="fas fa-envelope me-2"></i>Contact</h5>
-                    <p><i class="fas fa-envelope me-2"></i>contact@signatureseconds.com</p>
+                    <p><i class="fas fa-envelope me-2"></i>vertex@gmail.com</p>
                     <p><i class="fas fa-phone me-2"></i>+123 456 7890</p>
                     <div class="social-icons mt-3">
                         <a href="#" class="text-light"><i class="fab fa-instagram"></i></a>

@@ -1,0 +1,1038 @@
+{% extends 'user_base.html' %}
+{% load static %}
+
+{% block title %}Products List{% endblock %}
+
+{% block extra_css %}
+
+<style>
+
+/* =========================================================
+   PRODUCT SECTION
+========================================================= */
+
+.product_section {
+    background-color: #ddd9e4cc;
+    padding: 60px 0 80px;
+    min-height: 70vh;
+}
+
+.product_heading {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.product_heading h2 {
+    color: #6c5b7b;
+    font-size: 30px;
+    font-weight: 600;
+    margin: 0;
+}
+
+
+/* =========================================================
+   PRODUCT GRID
+========================================================= */
+
+.product_container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+}
+
+
+/* =========================================================
+   PRODUCT CARD
+========================================================= */
+
+.product_container .box {
+    background: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.product_container .box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(108, 91, 123, 0.20);
+}
+
+
+/* =========================================================
+   IMAGE BOX
+========================================================= */
+
+.product_container .box .img-box {
+    width: 100%;
+    height: 260px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: #f7f7f7;
+    position: relative;
+}
+
+.product_container .box .img-box a {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+.product_container .box .img-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 15px;
+    transition: transform 0.4s ease;
+}
+
+.product_container .box:hover .img-box img {
+    transform: scale(1.05);
+}
+
+
+/* =========================================================
+   PRODUCT DETAILS
+========================================================= */
+
+.product_container .box .detail-box {
+    padding: 18px 20px;
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    flex: 1;
+}
+
+.product_container .box .detail-box .text {
+    flex: 1;
+}
+
+.product_container .box .detail-box h6 {
+    color: #333;
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 8px;
+    line-height: 1.4;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.product_container .box .detail-box h5 {
+    color: #6c5b7b;
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.product_container .box .detail-box h5 span {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+
+/* =========================================================
+   WISHLIST / RATING
+========================================================= */
+
+.product_container .box .like {
+    text-align: right;
+    min-width: 100px;
+}
+
+.product_container .box .like h6 {
+    font-size: 13px;
+    font-weight: 500;
+    color: #777;
+    margin-bottom: 8px;
+}
+
+.wishlist-icon {
+    position: relative;
+    top: 0.5px;
+    font-size: 17px;
+    color: #ccc;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.wishlist-icon:hover {
+    color: #6c5b7b;
+    transform: scale(1.15);
+}
+
+.wishlist-icon.active {
+    color: #ff0000;
+}
+
+.star_container {
+    display: flex;
+    justify-content: flex-end;
+    gap: 2px;
+}
+
+.star_container i {
+    color: #ffc107;
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+.product_container .box .btn-box {
+    display: flex;
+    gap: 10px;
+    padding: 0 20px 20px;
+}
+
+.product_container .box .btn-box a {
+    flex: 1;
+    text-align: center;
+    text-decoration: none;
+    padding: 10px 12px;
+    border-radius: 25px;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.product_container .box .btn-box a:first-child {
+    color: #6c5b7b;
+    background: #f1eef4;
+    border: 1px solid #6c5b7b;
+}
+
+.product_container .box .btn-box a:first-child:hover {
+    background: #6c5b7b;
+    color: #ffffff;
+}
+
+.product_container .box .btn-box a:last-child {
+    color: #ffffff;
+    background: #6c5b7b;
+    border: 1px solid #6c5b7b;
+}
+
+.product_container .box .btn-box a:last-child:hover {
+    background: #574767;
+    border-color: #574767;
+    transform: translateY(-2px);
+}
+
+
+/* =========================================================
+   PAGINATION
+========================================================= */
+
+.pagination-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 40px;
+}
+
+.pagination {
+    display: flex;
+    padding-left: 0;
+    list-style: none;
+    margin: 0;
+    gap: 5px;
+}
+
+.page-item {
+    margin: 0;
+}
+
+.page-item .page-link {
+    position: relative;
+    display: block;
+    padding: 8px 13px;
+    line-height: 1.25;
+    color: #333;
+    background-color: #ffffff;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.page-item .page-link:hover {
+    color: #ffffff;
+    background-color: #6c5b7b;
+    border-color: #6c5b7b;
+}
+
+.page-item.active .page-link {
+    color: #ffffff;
+    background-color: #6c5b7b;
+    border-color: #6c5b7b;
+}
+
+.page-item.disabled .page-link {
+    color: #aaa;
+    pointer-events: none;
+    cursor: default;
+    background-color: #ffffff;
+    border-color: #dee2e6;
+}
+
+
+/* =========================================================
+   EMPTY PRODUCTS
+========================================================= */
+
+.no-products {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 70px 20px;
+}
+
+.no-products i {
+    color: #aaa;
+    margin-bottom: 20px;
+}
+
+.no-products h4 {
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.no-products p {
+    color: #999;
+}
+
+
+/* =========================================================
+   RESPONSIVE - TABLET
+========================================================= */
+
+@media (max-width: 991px) {
+
+    .product_container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    .product_container .box .img-box {
+        height: 230px;
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE - MOBILE
+========================================================= */
+
+@media (max-width: 576px) {
+
+    .product_section {
+        padding: 40px 0 60px;
+    }
+
+    .product_heading h2 {
+        font-size: 24px;
+    }
+
+    .product_container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .product_container .box {
+        border-radius: 8px;
+    }
+
+    .product_container .box .img-box {
+        height: 160px;
+    }
+
+    .product_container .box .img-box img {
+        padding: 8px;
+    }
+
+    .product_container .box .detail-box {
+        padding: 10px;
+        gap: 5px;
+        display: block;
+    }
+
+    .product_container .box .detail-box h6 {
+        font-size: 13px;
+        margin-bottom: 5px;
+    }
+
+    .product_container .box .detail-box h5 {
+        font-size: 15px;
+    }
+
+    .product_container .box .like {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 8px;
+        text-align: left;
+    }
+
+    .product_container .box .like h6 {
+        margin: 0;
+        font-size: 11px;
+    }
+
+    .star_container {
+        justify-content: flex-end;
+    }
+
+    .star_container i {
+        font-size: 9px;
+    }
+
+    .wishlist-icon {
+        font-size: 14px;
+    }
+
+    .product_container .box .btn-box {
+        padding: 0 10px 12px;
+        gap: 5px;
+    }
+
+    .product_container .box .btn-box a {
+        font-size: 10px;
+        padding: 7px 5px;
+    }
+
+    .page-item .page-link {
+        padding: 6px 9px;
+        font-size: 13px;
+    }
+
+}
+
+
+/* =========================================================
+   VERY SMALL MOBILE
+========================================================= */
+
+@media (max-width: 400px) {
+
+    .product_container {
+        gap: 8px;
+    }
+
+    .product_container .box .img-box {
+        height: 140px;
+    }
+
+    .product_container .box .detail-box h6 {
+        font-size: 12px;
+    }
+
+    .product_container .box .detail-box h5 {
+        font-size: 14px;
+    }
+
+    .product_container .box .btn-box {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .product_container .box .btn-box a {
+        width: 100%;
+        font-size: 10px;
+    }
+
+}
+
+</style>
+
+{% endblock %}
+
+
+{% block content %}
+
+<!-- =====================================================
+     PRODUCT SECTION
+===================================================== -->
+
+<section class="product_section">
+
+    <div class="container">
+
+        <div class="product_heading">
+            <h2>Our Watches</h2>
+        </div>
+
+
+        <!-- PRODUCT GRID -->
+
+        <div class="product_container">
+
+            {% for product in products %}
+
+            <div class="box">
+
+                <!-- PRODUCT IMAGE -->
+
+                <div class="box-content">
+
+                    <div class="img-box">
+
+                        <a href="{% url 'products:product_details' product.id %}">
+
+                            {% if product.main_image %}
+
+                                <img
+                                    src="{{ product.main_image.image.url }}"
+                                    alt="{{ product.name }}"
+                                >
+
+                            {% else %}
+
+                                <img
+                                    src="{% static 'images/no-image.png' %}"
+                                    alt="No image available"
+                                >
+
+                            {% endif %}
+
+                        </a>
+
+                    </div>
+
+
+                    <!-- PRODUCT DETAILS -->
+
+                    <div class="detail-box">
+
+                        <div class="text">
+
+                            <h6>
+                                {{ product.name }}
+                            </h6>
+
+                            <h5>
+                                <span>$</span>{{ product.sale_price }}
+                            </h5>
+
+                        </div>
+
+
+                        <!-- WISHLIST + RATING -->
+
+                        <div class="like">
+
+                            <h6>
+
+                                Like
+
+                                <span>
+                                    <i
+                                        class="fas fa-heart wishlist-icon ml-2"
+                                        data-product-id="{{ product.id }}"
+                                        title="Add to wishlist"
+                                    ></i>
+                                </span>
+
+                            </h6>
+
+
+                            <div class="star_container">
+
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- BUTTONS -->
+
+                <div class="btn-box">
+
+                    <a href="{% url 'products:product_details' product.id %}">
+                        View Details
+                    </a>
+
+                    <a
+                        href="#"
+                        onclick="addToCart({{ product.id }}); return false;"
+                    >
+                        <i class="fas fa-cart-plus"></i>
+                        Add To Cart
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            {% empty %}
+
+            <!-- NO PRODUCTS -->
+
+            <div class="no-products">
+
+                <i class="fas fa-clock fa-3x"></i>
+
+                <h4>
+                    No products available
+                </h4>
+
+                <p>
+                    Check back later for new arrivals!
+                </p>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+
+        <!-- =================================================
+             PAGINATION
+        ================================================= -->
+
+        {% if products.has_other_pages %}
+
+        <div class="pagination-container">
+
+            <ul class="pagination">
+
+                <!-- PREVIOUS -->
+
+                {% if products.has_previous %}
+
+                <li class="page-item">
+
+                    <a
+                        class="page-link"
+                        href="?page={{ products.previous_page_number }}"
+                        aria-label="Previous"
+                    >
+                        &laquo;
+                    </a>
+
+                </li>
+
+                {% else %}
+
+                <li class="page-item disabled">
+
+                    <span class="page-link">
+                        &laquo;
+                    </span>
+
+                </li>
+
+                {% endif %}
+
+
+                <!-- PAGE NUMBERS -->
+
+                {% for num in products.paginator.page_range %}
+
+                    {% if products.number == num %}
+
+                    <li class="page-item active">
+
+                        <span class="page-link">
+                            {{ num }}
+                        </span>
+
+                    </li>
+
+                    {% elif num > products.number|add:'-3'
+                          and num < products.number|add:'3' %}
+
+                    <li class="page-item">
+
+                        <a
+                            class="page-link"
+                            href="?page={{ num }}"
+                        >
+                            {{ num }}
+                        </a>
+
+                    </li>
+
+                    {% endif %}
+
+                {% endfor %}
+
+
+                <!-- NEXT -->
+
+                {% if products.has_next %}
+
+                <li class="page-item">
+
+                    <a
+                        class="page-link"
+                        href="?page={{ products.next_page_number }}"
+                        aria-label="Next"
+                    >
+                        &raquo;
+                    </a>
+
+                </li>
+
+                {% else %}
+
+                <li class="page-item disabled">
+
+                    <span class="page-link">
+                        &raquo;
+                    </span>
+
+                </li>
+
+                {% endif %}
+
+            </ul>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script>
+
+/* =========================================================
+   GET CSRF TOKEN
+========================================================= */
+
+function getCSRFToken() {
+
+    const cookies = document.cookie.split(';');
+
+    for (let cookie of cookies) {
+
+        const [name, value] = cookie.trim().split('=');
+
+        if (name === 'csrftoken') {
+            return value;
+        }
+
+    }
+
+    return null;
+}
+
+
+/* =========================================================
+   ADD TO CART
+========================================================= */
+
+function addToCart(productId) {
+
+    console.log(
+        'Adding product to cart:',
+        productId
+    );
+
+
+    fetch(`/users/add-to-cart/${productId}/`, {
+
+        method: 'POST',
+
+        headers: {
+            'X-CSRFToken': getCSRFToken(),
+            'Content-Type': 'application/json'
+        },
+
+        credentials: 'same-origin'
+
+    })
+
+    .then(response => {
+
+        if (!response.ok) {
+            throw new Error(
+                `HTTP error: ${response.status}`
+            );
+        }
+
+        return response.json();
+
+    })
+
+    .then(data => {
+
+        if (data.success) {
+
+            showToast(
+                data.message || 'Product added to cart!',
+                'success'
+            );
+
+
+            /* Update cart count */
+
+            document
+                .querySelectorAll('.badge-cart')
+                .forEach(badge => {
+
+                    badge.textContent =
+                        data.cart_count;
+
+                });
+
+        }
+
+        else {
+
+            showToast(
+                data.message ||
+                'Error adding product to cart.',
+                'error'
+            );
+
+        }
+
+    })
+
+    .catch(error => {
+
+        console.error(
+            'Add to cart error:',
+            error
+        );
+
+        showToast(
+            'Network error. Please try again.',
+            'error'
+        );
+
+    });
+
+}
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+function showToast(
+    message,
+    type = 'success'
+) {
+
+    let container =
+        document.getElementById(
+            'toastContainer'
+        );
+
+
+    if (!container) {
+
+        container =
+            document.createElement('div');
+
+        container.id =
+            'toastContainer';
+
+        container.style.position =
+            'fixed';
+
+        container.style.top =
+            '20px';
+
+        container.style.right =
+            '20px';
+
+        container.style.zIndex =
+            '9999';
+
+        document.body.appendChild(
+            container
+        );
+
+    }
+
+
+    const toast =
+        document.createElement('div');
+
+
+    toast.className =
+        `toast-message ${
+            type === 'success'
+                ? 'toast-success'
+                : 'toast-error'
+        }`;
+
+
+    toast.innerHTML = `
+
+        <div class="toast-content">
+
+            <i class="fas ${
+                type === 'success'
+                    ? 'fa-check-circle'
+                    : 'fa-exclamation-circle'
+            }"></i>
+
+            <span>${message}</span>
+
+        </div>
+
+    `;
+
+
+    container.appendChild(
+        toast
+    );
+
+
+    setTimeout(() => {
+
+        toast.remove();
+
+    }, 3000);
+
+}
+
+
+/* =========================================================
+   TOAST CSS
+========================================================= */
+
+const toastStyle =
+    document.createElement('style');
+
+toastStyle.innerHTML = `
+
+    .toast-message {
+        min-width: 280px;
+        padding: 14px 18px;
+        margin-bottom: 10px;
+        border-radius: 8px;
+        color: #ffffff;
+        box-shadow:
+            0 5px 20px rgba(0,0,0,0.2);
+        animation:
+            toastSlide 0.3s ease;
+    }
+
+    .toast-success {
+        background: #28a745;
+    }
+
+    .toast-error {
+        background: #dc3545;
+    }
+
+    .toast-content {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 14px;
+    }
+
+    @keyframes toastSlide {
+
+        from {
+            opacity: 0;
+            transform: translateX(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+    }
+
+`;
+
+document.head.appendChild(
+    toastStyle
+);
+
+
+/* =========================================================
+   WISHLIST
+========================================================= */
+
+document
+    .querySelectorAll('.wishlist-icon')
+    .forEach(icon => {
+
+        icon.addEventListener(
+            'click',
+            function() {
+
+                this.classList.toggle(
+                    'active'
+                );
+
+
+                const productId =
+                    this.dataset.productId;
+
+
+                if (
+                    this.classList.contains(
+                        'active'
+                    )
+                ) {
+
+                    showToast(
+                        'Added to wishlist!',
+                        'success'
+                    );
+
+                }
+
+                else {
+
+                    showToast(
+                        'Removed from wishlist!',
+                        'success'
+                    );
+
+                }
+
+
+                console.log(
+                    'Wishlist product:',
+                    productId
+                );
+
+            }
+        );
+
+    });
+
+</script>
+
+{% endblock %}

@@ -1,7 +1,7 @@
 {% extends 'user_base.html' %}
 {% load static %}
 
-{% block title %}Home - Signature Seconds{% endblock %}
+{% block title %}Home - Vertex{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -404,7 +404,7 @@
                             <div class="detail-box">
                                 <h1>Stylish Watches</h1>
                                 <p>
-                                    Signature Seconds offers a curated collection of wristwatches that blend luxury with practicality, perfect for both casual and formal occasions.
+                                   Vertex offers a curated collection of wristwatches that blend luxury with practicality, perfect for both casual and formal occasions.
                                 </p>
                                 <div class="btn-box">
                                     <a href="https://www.tissotwatches.com/en-in" class="btn1" target="_blank">
@@ -513,7 +513,7 @@
         <div class="product-grid">
             {% for product in products %}
             <div class="product-card">
-                <a href="{% url 'products_details' product.id %}" class="product-image" style="text-decoration: none;">
+                <a href="{% url 'products:product_details' product.id %}" class="product-image" style="text-decoration: none;">
                     {% if product.main_image %}
                         <img src="{{ product.main_image.image.url }}" alt="{{ product.name }}">
                     {% else %}
@@ -522,7 +522,7 @@
                 </a>
                 
                 <div class="product-details">
-                    <a href="{% url 'products_details' product.id %}" style="text-decoration: none; color: inherit;">
+                    <a href="{% url 'products:product_details' product.id %}" style="text-decoration: none; color: inherit;">
                         <h6 class="product-name">{{ product.name }}</h6>
                     </a>
                     

@@ -1,0 +1,138 @@
+{% extends 'admin_base.html' %}
+{% load static %}
+
+{% block title %}Product List - Admin Panel{% endblock %}
+{% block navbar_icon %}box{% endblock %}
+{% block navbar_title %}Products List{% endblock %}
+
+{% block extra_css %}
+<style>
+    .product-table-wrapper {
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .product-table-wrapper .table {
+        margin-bottom: 0;
+    }
+    .product-table-wrapper .table th {
+        background: #f8f9fa;
+        border-bottom: 2px solid #dee2e6;
+        color: #2c3e50;
+        font-weight: 600;
+    }
+    .product-table-wrapper .table td {
+        vertical-align: middle;
+    }
+    .product-table-wrapper .table tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+    .stock-badge {
+        padding: 3px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+    .stock-badge.in-stock {
+        background: #d4edda;
+        color: #155724;
+    }
+    .stock-badge.out-of-stock {
+        background: #f8d7da;
+        color: #721c24;
+    }
+    .search-box {
+        max-width: 300px;
+    }
+    .action-btns .btn {
+        margin: 2px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+    <form method="get" action="" class="d-flex search-box">
+        <input type="text" name="q" class="form-control form-control-sm me-2" placeholder="Search products..." value="{{ request.GET.q }}">
+        <button type="submit" class="btn btn-dark btn-sm">
+            <i class="fas fa-search"></i>
+        </button>
+    </form>
+    <a href="{% url 'customadmin:add_product' %}" class="btn btn-dark btn-sm">
+        <i class="fas fa-plus-circle me-1"></i>Add Product
+    </a>
+</div>
+
+<div class="product-table-wrapper">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Sl.no</th>
+                <th>Product</th>
+                <th>Category</th>
+                <th>Sale Price</th>
+                <th>Qty</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>
+                    <div class="d-flex align-items-center">
+                        {% if product.main_image %}
+                            <img src="{{ product.main_image.image.url }}" alt="{{ product.name }}" 
+                                 style="width: 40px; height: 40px; object-fit: cover; border-radius: 5px; margin-right: 10px;">
+                        {% else %}
+                            <div style="width: 40px; height: 40px; background: #e9ecef; border-radius: 5px; margin-right: 10px; 
+                                        display: flex; align-items: center; justify-content: center; color: #adb5bd;">
+                                <i class="fas fa-image"></i>
+                            </div>
+                        {% endif %}
+                        <span>{{ product.name }}</span>
+                    </div>
+                </td>
+                <td>{{ product.category.name }}</td>
+                <td>${{ product.sale_price|floatformat:2 }}</td>
+                <td>{{ product.quantity }}</td>
+                <td>
+                    {% if product.quantity > 0 %}
+                        <span class="stock-badge in-stock"><i class="fas fa-check-circle me-1"></i>In Stock</span>
+                    {% else %}
+                        <span class="stock-badge out-of-stock"><i class="fas fa-times-circle me-1"></i>Out of Stock</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <div class="action-btns d-flex flex-wrap">
+                        <a href="{% url 'customadmin:view_product' product.id %}"
+                        class="btn btn-success btn-sm">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                        <a href="{% url 'customadmin:edit_product' product.id %}"
+                        class="btn btn-primary btn-sm">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <form method="post" action="{% url 'customadmin:delete_product' product.id %}" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Delete this product?')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" class="text-center py-4">
+                    <i class="fas fa-box-open fa-2x text-muted mb-2 d-block"></i>
+                    <p class="text-muted mb-0">No products found</p>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

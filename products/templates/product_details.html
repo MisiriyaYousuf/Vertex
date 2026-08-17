@@ -1,0 +1,1449 @@
+{% extends 'user_base.html' %}
+{% load static %}
+
+{% block title %}Product Details - {{ product.name }}{% endblock %}
+
+{% block extra_css %}
+
+<link rel="stylesheet" href="{% static 'css/product_details.css' %}">
+
+<style>
+/* =========================================================
+   COMPACT NAVBAR
+========================================================= */
+
+.navbar-main {
+    min-height: 40px !important;
+    padding-top: 2px !important;
+    padding-bottom: 2px !important;
+}
+
+.navbar-main .navbar-brand {
+    padding-top: 2px !important;
+    padding-bottom: 2px !important;
+    font-size: 1.1rem !important;
+}
+
+.navbar-main .navbar-nav .nav-link {
+    padding-top: 3px !important;
+    padding-bottom: 3px !important;
+    font-size: 0.85rem !important;
+}
+
+.navbar-main .navbar-toggler {
+    padding: 2px 6px !important;
+    font-size: 0.9rem !important;
+}
+
+.sub-navbar {
+    min-height: 30px !important;
+    padding-top: 2px !important;
+    padding-bottom: 2px !important;
+}
+
+.sub-navbar .nav-link {
+    padding-top: 2px !important;
+    padding-bottom: 2px !important;
+    font-size: 0.8rem !important;
+}
+
+.navbar {
+    min-height: 40px !important;
+    padding-top: 2px !important;
+    padding-bottom: 2px !important;
+}
+
+.navbar-nav .nav-link {
+    padding-top: 3px !important;
+    padding-bottom: 3px !important;
+}
+
+.dropdown-menu {
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+}
+
+.dropdown-item {
+    padding-top: 3px !important;
+    padding-bottom: 3px !important;
+    font-size: 0.85rem !important;
+}
+
+.navbar .form-control {
+    padding-top: 3px !important;
+    padding-bottom: 3px !important;
+    height: 28px !important;
+    font-size: 0.85rem !important;
+}
+
+.navbar .btn {
+    padding-top: 2px !important;
+    padding-bottom: 2px !important;
+    font-size: 0.8rem !important;
+}
+
+.navbar-nav {
+    gap: 2px !important;
+}
+
+.navbar-nav .nav-item {
+    margin-right: 2px !important;
+}
+
+.navbar-main ul li::before,
+.navbar-main ul li::after,
+.sub-navbar ul li::before,
+.sub-navbar ul li::after,
+.navbar-nav li::before,
+.navbar-nav li::after {
+    content: none !important;
+    display: none !important;
+}
+
+
+/* =========================================================
+   MAIN PRODUCT IMAGE
+========================================================= */
+
+.square-box {
+    width: 300px;
+    height: 300px;
+    border: 1px solid #ddd;
+    margin: 0 auto;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f9f9f9;
+    overflow: hidden;
+}
+
+.image-zoom-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.image-zoom-container img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    transition: transform 0.2s ease;
+    margin: auto;
+}
+
+.image-zoom-container:hover img {
+    cursor: zoom-in;
+}
+
+.image-zoom-container img.zoomed {
+    transform: scale(3);
+    cursor: zoom-out;
+}
+
+
+/* =========================================================
+   WISHLIST
+========================================================= */
+
+.wishlist-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    color: #ccc;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    z-index: 5;
+}
+
+.wishlist-icon:hover {
+    color: #582e79;
+}
+
+.wishlist-icon.active {
+    color: #ff0000;
+}
+
+
+/* =========================================================
+   VARIANT IMAGES
+========================================================= */
+
+.variant-images {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.variant-images img {
+    width: 75px;
+    height: 75px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    object-fit: cover;
+    transition: all 0.2s ease;
+}
+
+.variant-images img:hover {
+    border-color: #582e79;
+    transform: scale(1.05);
+}
+
+
+/* =========================================================
+   PRODUCT INFORMATION
+========================================================= */
+
+.card-title {
+    margin-bottom: 8px !important;
+    font-weight: 600;
+}
+
+.product-price {
+    font-size: 24px;
+    font-weight: 700;
+    color: #582e79;
+}
+
+.discount-price {
+    font-size: 15px;
+    color: #dc3545;
+    font-weight: 500;
+}
+
+.stock-status {
+    margin-top: 10px;
+}
+
+.stock-status.in-stock {
+    color: green;
+    font-weight: bold;
+}
+
+.stock-status.out-of-stock {
+    color: red;
+    font-weight: bold;
+}
+
+.category {
+    margin-bottom: 10px;
+}
+
+
+/* =========================================================
+   RATINGS
+========================================================= */
+
+.ratings {
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.ratings span {
+    margin-left: 8px;
+    color: #555;
+}
+
+
+/* =========================================================
+   CUSTOMER REVIEWS
+========================================================= */
+
+.customer-reviews {
+    background-color: #c9e3fd;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+.customer-reviews h5 {
+    margin-bottom: 15px;
+}
+
+.review {
+    border-bottom: 1.5px solid #ddd;
+    padding: 10px 0;
+}
+
+.review:last-child {
+    border-bottom: none;
+}
+
+.review p {
+    margin: 3px 0;
+}
+
+
+/* =========================================================
+   STAR RATING
+========================================================= */
+
+.star-rating {
+    display: flex;
+    gap: 3px;
+}
+
+.star {
+    font-size: 18px;
+    color: #ddd;
+}
+
+.star::before {
+    content: "★";
+}
+
+.star.filled {
+    color: #ffcc00;
+}
+
+.star.half {
+    background: linear-gradient(
+        90deg,
+        #ffcc00 50%,
+        #ddd 50%
+    );
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+
+/* =========================================================
+   RELATED PRODUCTS
+========================================================= */
+
+.related-products {
+    margin-bottom: 40px;
+}
+
+.related-products h3 {
+    color: #582e79;
+}
+
+.related-products .product-item {
+    width: 200px;
+    transition: transform 0.3s ease;
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.related-products .product-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.related-products .product-item .card-img-top {
+    height: 180px;
+    width: 100%;
+    object-fit: contain;
+    background-color: #ffffff;
+    padding: 10px;
+}
+
+.related-products .card-body {
+    padding: 10px;
+}
+
+.related-products .card-text {
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+
+/* =========================================================
+   BREADCRUMB
+========================================================= */
+
+.breadcrumb {
+    background-color: transparent;
+    padding: 0;
+    margin-bottom: 10px !important;
+}
+
+.breadcrumb a {
+    color: #582e79;
+    text-decoration: none;
+}
+
+
+/* =========================================================
+   SOCIAL / NEWSLETTER
+========================================================= */
+
+.social-icons a {
+    color: white;
+    font-size: 1.5rem;
+    margin: 0 10px;
+    transition: color 0.3s;
+}
+
+.social-icons a:hover {
+    color: #adb5bd;
+}
+
+.newsletter-input {
+    max-width: 400px;
+}
+
+
+/* =========================================================
+   COMPACT CONTENT
+========================================================= */
+
+.container.mt-4 {
+    margin-top: 10px !important;
+}
+
+.card {
+    padding: 15px !important;
+}
+
+.card .row.g-3 {
+    --bs-gutter-y: 10px !important;
+}
+
+.mt-3 {
+    margin-top: 8px !important;
+}
+
+.mt-4 {
+    margin-top: 12px !important;
+}
+
+.mb-3 {
+    margin-bottom: 8px !important;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .variant-images img {
+        width: 60px;
+        height: 60px;
+    }
+
+    .square-box {
+        width: 250px;
+        height: 250px;
+    }
+
+    .related-products .product-item {
+        width: 150px;
+    }
+
+    .related-products .product-item .card-img-top {
+        height: 140px;
+    }
+
+    .navbar-main {
+        min-height: 35px !important;
+    }
+
+    .navbar-main .navbar-nav .nav-link {
+        padding-top: 2px !important;
+        padding-bottom: 2px !important;
+        font-size: 0.8rem !important;
+    }
+
+    .sub-navbar {
+        min-height: 25px !important;
+    }
+
+    .sub-navbar .nav-link {
+        font-size: 0.7rem !important;
+        padding-top: 1px !important;
+        padding-bottom: 1px !important;
+    }
+}
+
+
+@media (max-width: 576px) {
+
+    .square-box {
+        width: 220px;
+        height: 220px;
+    }
+
+    .product-price {
+        font-size: 20px;
+    }
+
+    .related-products .product-item {
+        width: 140px;
+    }
+
+    .related-products .product-item .card-img-top {
+        height: 120px;
+    }
+}
+</style>
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <!-- =====================================================
+         BREADCRUMB
+    ====================================================== -->
+
+    <nav class="breadcrumb">
+
+        <span class="breadcrumb-item">
+            Home
+        </span>
+
+        <span class="breadcrumb-item">
+            Products
+        </span>
+
+        <span class="breadcrumb-item active">
+            {{ product.name }}
+        </span>
+
+    </nav>
+
+
+    <!-- =====================================================
+         PRODUCT CARD
+    ====================================================== -->
+
+    <div class="card shadow-lg p-4">
+
+        <div class="row g-3">
+
+
+            <!-- =================================================
+                 COLUMN 1 - PRODUCT IMAGE
+            ================================================== -->
+
+            <div class="col-md-4">
+
+                <!-- Main Image -->
+
+                <div class="square-box">
+
+                    <div class="image-zoom-container">
+
+                        {% if product.main_image %}
+
+                            <img
+                                id="mainImage"
+                                class="img-fluid"
+                                src="{{ product.main_image.image.url }}"
+                                alt="{{ product.name }}"
+                            >
+
+                        {% else %}
+
+                            <img
+                                id="mainImage"
+                                class="img-fluid"
+                                src="{% static 'images/no-image.png' %}"
+                                alt="No image available"
+                            >
+
+                        {% endif %}
+
+
+                        <!-- Wishlist -->
+
+                        <i
+                            class="fas fa-heart wishlist-icon"
+                            id="wishlistIcon"
+                            data-product-id="{{ product.id }}"
+                        ></i>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Variant Images -->
+
+                <div class="variant-images mt-3">
+
+                    {% for variant in variants %}
+
+                        {% for image in variant.variant_images.all %}
+
+                            <img
+                                src="{{ image.image.url }}"
+                                alt="Variant Image"
+                                onclick="changeImage(this)"
+                            >
+
+                        {% endfor %}
+
+                    {% empty %}
+
+                        <p class="text-muted">
+                            No variant images available.
+                        </p>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 COLUMN 2 - PRODUCT INFORMATION
+            ================================================== -->
+
+            <div class="col-md-4">
+
+                <h4 class="card-title">
+                    {{ product.name }}
+                </h4>
+
+
+                <!-- Price -->
+
+                <div class="product-price mt-3">
+
+                    ${{ product.sale_price }}
+
+                </div>
+
+
+                <!-- Discount Price -->
+
+                {% if product.discount_price %}
+
+                    <div class="discount-price mt-2">
+
+                        Discount:
+                        ${{ product.discount_price }}
+
+                    </div>
+
+                {% endif %}
+
+
+                <!-- Stock -->
+
+                <p class="stock-status
+                    {% if product.quantity > 0 %}
+                        in-stock
+                    {% else %}
+                        out-of-stock
+                    {% endif %}
+                ">
+
+                    {% if product.quantity > 0 %}
+
+                        <i class="fas fa-check-circle"></i>
+                        In Stock
+
+                    {% else %}
+
+                        <i class="fas fa-times-circle"></i>
+                        Out of Stock
+
+                    {% endif %}
+
+                </p>
+
+
+                <!-- Category -->
+
+                <h6>
+                    Highlights
+                </h6>
+
+                <p class="category">
+
+                    Category:
+                    <strong>
+                        {{ product.category.name }}
+                    </strong>
+
+                </p>
+
+
+                <!-- Description -->
+
+                <h6>
+                    Description
+                </h6>
+
+                <p>
+                    {{ product.description }}
+                </p>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 COLUMN 3 - RATINGS & REVIEWS
+            ================================================== -->
+
+            <div class="col-md-4">
+
+
+                <!-- Ratings -->
+
+                <div class="ratings mb-3">
+
+                    <i
+                        class="fas fa-star"
+                        style="color: #ffcc00;"
+                    ></i>
+
+                    <i
+                        class="fas fa-star"
+                        style="color: #ffcc00;"
+                    ></i>
+
+                    <i
+                        class="fas fa-star"
+                        style="color: #ffcc00;"
+                    ></i>
+
+                    <i
+                        class="fas fa-star"
+                        style="color: #ffcc00;"
+                    ></i>
+
+                    <i
+                        class="fas fa-star-half-alt"
+                        style="color: #ffcc00;"
+                    ></i>
+
+                    <span>
+                        Ratings & Review
+                    </span>
+
+                </div>
+
+
+
+                <!-- Customer Reviews -->
+
+                <div class="customer-reviews mt-4">
+
+                    <h5 class="text-center">
+                        Customer Reviews
+                    </h5>
+
+
+                    <!-- Review 1 -->
+
+                    <div class="review">
+
+                        <p>
+                            <strong>
+                                John Doe
+                            </strong>
+                        </p>
+
+                        <div class="star-rating">
+
+                            <span class="star filled"></span>
+                            <span class="star filled"></span>
+                            <span class="star filled"></span>
+                            <span class="star filled"></span>
+                            <span class="star half"></span>
+
+                        </div>
+
+                        <p>
+                            "Great watch! Looks even better in person."
+                        </p>
+
+                    </div>
+
+
+                    <!-- Review 2 -->
+
+                    <div class="review">
+
+                        <p>
+                            <strong>
+                                Jane Smith
+                            </strong>
+                        </p>
+
+                        <div class="star-rating">
+
+                            <span class="star filled"></span>
+                            <span class="star filled"></span>
+                            <span class="star filled"></span>
+                            <span class="star"></span>
+                            <span class="star"></span>
+
+                        </div>
+
+                        <p>
+                            "Really nice quality, but the strap could be softer."
+                        </p>
+
+                    </div>
+
+
+                    <!-- Review 3 -->
+
+                    <div class="review">
+
+                        <p>
+                            <strong>
+                                Mike Johnson
+                            </strong>
+                        </p>
+
+                        <div class="star-rating">
+
+                            <span class="star filled"></span>
+                            <span class="star filled"></span>
+                            <span class="star filled"></span>
+                            <span class="star filled"></span>
+                            <span class="star filled"></span>
+
+                        </div>
+
+                        <p>
+                            "Excellent watch, very durable and stylish!"
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =====================================================
+             ADD TO CART
+        ====================================================== -->
+
+        <div class="col-12 text-center mt-4">
+
+            {% if product.quantity > 0 %}
+
+                <button
+                    class="btn btn-dark btn-lg mb-5"
+                    onclick="addToCart({{ product.id }})"
+                >
+
+                    <i class="fas fa-shopping-cart me-2"></i>
+
+                    Add to Cart
+
+                </button>
+
+            {% else %}
+
+                <button
+                    class="btn btn-secondary btn-lg"
+                    disabled
+                >
+
+                    <i class="fas fa-times-circle me-2"></i>
+
+                    Out of Stock
+
+                </button>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         RELATED PRODUCTS
+    ====================================================== -->
+
+    <div class="related-products mt-5">
+
+        <h3 class="m-3">
+            Related Products
+        </h3>
+
+
+        <div class="product-list d-flex flex-wrap gap-4 justify-content-start">
+
+            {% for related_product in related_products %}
+
+                <div class="product-item card text-center p-3">
+
+
+                    <!-- Product Image -->
+
+                    {% if related_product.main_image %}
+
+                        <img
+                            src="{{ related_product.main_image.image.url }}"
+                            class="card-img-top"
+                            alt="{{ related_product.name }}"
+                        >
+
+                    {% else %}
+
+                        <img
+                            src="{% static 'images/no-image.png' %}"
+                            class="card-img-top"
+                            alt="No image available"
+                        >
+
+                    {% endif %}
+
+
+                    <div class="card-body">
+
+                        <p class="card-text">
+
+                            {{ related_product.name }}
+
+                        </p>
+
+
+                        <span class="text-muted">
+
+                            ${{ related_product.sale_price }}
+
+                        </span>
+
+
+                        <br>
+
+
+                        <a
+                            href="{% url 'products:product_details' related_product.id %}"
+                            class="btn btn-sm btn-dark mt-2"
+                        >
+
+                            Details
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            {% empty %}
+
+                <!-- Fallback Products -->
+
+                <div class="product-item card text-center p-3">
+
+                    <img
+                        src="{% static 'images/w1.png' %}"
+                        class="card-img-top"
+                        alt="Product 1"
+                    >
+
+                    <div class="card-body">
+
+                        <p class="card-text">
+                            Elegant Men's Watch
+                        </p>
+
+                        <span class="text-muted">
+                            $250
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="product-item card text-center p-3">
+
+                    <img
+                        src="{% static 'images/w2.png' %}"
+                        class="card-img-top"
+                        alt="Product 2"
+                    >
+
+                    <div class="card-body">
+
+                        <p class="card-text">
+                            Sporty Digital Watch
+                        </p>
+
+                        <span class="text-muted">
+                            $180
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="product-item card text-center p-3">
+
+                    <img
+                        src="{% static 'images/w3.png' %}"
+                        class="card-img-top"
+                        alt="Product 3"
+                    >
+
+                    <div class="card-body">
+
+                        <p class="card-text">
+                            Classic Women's Watch
+                        </p>
+
+                        <span class="text-muted">
+                            $200
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="product-item card text-center p-3">
+
+                    <img
+                        src="{% static 'images/w5.png' %}"
+                        class="card-img-top"
+                        alt="Product 4"
+                    >
+
+                    <div class="card-body">
+
+                        <p class="card-text">
+                            Premium Women's Watch
+                        </p>
+
+                        <span class="text-muted">
+                            $500
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="product-item card text-center p-3">
+
+                    <img
+                        src="{% static 'images/w8.png' %}"
+                        class="card-img-top"
+                        alt="Product 5"
+                    >
+
+                    <div class="card-body">
+
+                        <p class="card-text">
+                            Classic Men's Watch
+                        </p>
+
+                        <span class="text-muted">
+                            $250
+                        </span>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     TOAST CONTAINER
+====================================================== -->
+
+<div
+    id="toastContainer"
+    style="
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+    "
+></div>
+
+{% endblock %}
+
+
+
+{% block extra_js %}
+
+<script>
+
+/* =========================================================
+   CHANGE PRODUCT IMAGE
+========================================================= */
+
+function changeImage(element) {
+
+    const mainImage = document.getElementById("mainImage");
+
+    if (mainImage) {
+        mainImage.src = element.src;
+    }
+
+}
+
+
+/* =========================================================
+   WISHLIST
+========================================================= */
+
+const wishlistIcon = document.getElementById("wishlistIcon");
+
+if (wishlistIcon) {
+
+    wishlistIcon.addEventListener("click", function () {
+
+        this.classList.toggle("active");
+
+        const productId = this.dataset.productId;
+
+        console.log(
+            "Wishlist toggled for product:",
+            productId
+        );
+
+    });
+
+}
+
+
+/* =========================================================
+   IMAGE ZOOM
+========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const image =
+            document.getElementById("mainImage");
+
+        if (!image) {
+            return;
+        }
+
+        const container =
+            image.parentElement;
+
+        let isZoomed = false;
+
+
+        image.addEventListener(
+            "click",
+            function (event) {
+
+                if (isZoomed) {
+
+                    image.style.transform = "none";
+
+                    isZoomed = false;
+
+                    return;
+                }
+
+
+                const rect =
+                    container.getBoundingClientRect();
+
+
+                const offsetX =
+                    event.clientX - rect.left;
+
+                const offsetY =
+                    event.clientY - rect.top;
+
+
+                const xPercent =
+                    (offsetX / rect.width) * 100;
+
+                const yPercent =
+                    (offsetY / rect.height) * 100;
+
+
+                image.style.transformOrigin =
+                    `${xPercent}% ${yPercent}%`;
+
+
+                image.style.transform =
+                    "scale(3)";
+
+
+                isZoomed = true;
+
+            }
+        );
+
+
+        container.addEventListener(
+            "mouseleave",
+            function () {
+
+                if (isZoomed) {
+
+                    image.style.transform = "none";
+
+                    isZoomed = false;
+
+                }
+
+            }
+        );
+
+    }
+);
+
+
+/* =========================================================
+   CSRF TOKEN
+========================================================= */
+
+function getCSRFToken() {
+
+    const cookies =
+        document.cookie.split(";");
+
+
+    for (let cookie of cookies) {
+
+        const parts =
+            cookie.trim().split("=");
+
+        const name = parts[0];
+
+        const value = parts.slice(1).join("=");
+
+
+        if (name === "csrftoken") {
+
+            return decodeURIComponent(value);
+
+        }
+
+    }
+
+    return null;
+
+}
+
+
+/* =========================================================
+   ADD TO CART
+========================================================= */
+
+function addToCart(productId) {
+
+    console.log(
+        "Adding product to cart:",
+        productId
+    );
+
+
+    fetch(
+        `/users/add-to-cart/${productId}/`,
+        {
+            method: "POST",
+
+            headers: {
+                "X-CSRFToken": getCSRFToken(),
+                "Content-Type": "application/json"
+            },
+
+            credentials: "same-origin"
+        }
+    )
+
+    .then(
+        response => {
+
+            console.log(
+                "Response status:",
+                response.status
+            );
+
+            return response.json();
+
+        }
+    )
+
+    .then(
+        data => {
+
+            console.log(
+                "Response data:",
+                data
+            );
+
+
+            if (data.success) {
+
+                showToast(
+                    data.message,
+                    "success"
+                );
+
+
+                document
+                    .querySelectorAll(".badge-cart")
+                    .forEach(
+                        badge => {
+
+                            badge.textContent =
+                                data.cart_count;
+
+                        }
+                    );
+
+            }
+
+            else {
+
+                showToast(
+                    data.message ||
+                    "Error adding to cart",
+                    "error"
+                );
+
+            }
+
+        }
+    )
+
+    .catch(
+        error => {
+
+            console.error(
+                "Error:",
+                error
+            );
+
+
+            showToast(
+                "Network error. Please try again.",
+                "error"
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+function showToast(
+    message,
+    type = "success"
+) {
+
+    const container =
+        document.getElementById(
+            "toastContainer"
+        );
+
+
+    if (!container) {
+        return;
+    }
+
+
+    const toast =
+        document.createElement("div");
+
+
+    toast.className =
+        `toast show align-items-center text-white ${
+            type === "success"
+                ? "bg-success"
+                : "bg-danger"
+        } border-0`;
+
+
+    toast.role = "alert";
+
+
+    toast.style.marginBottom =
+        "10px";
+
+
+    toast.style.minWidth =
+        "300px";
+
+
+    toast.innerHTML = `
+
+        <div class="d-flex">
+
+            <div class="toast-body">
+
+                <i class="fas ${
+                    type === "success"
+                        ? "fa-check-circle"
+                        : "fa-exclamation-circle"
+                } me-2"></i>
+
+                ${message}
+
+            </div>
+
+            <button
+                type="button"
+                class="btn-close btn-close-white me-2 m-auto"
+                onclick="this.closest('.toast').remove()"
+            ></button>
+
+        </div>
+
+    `;
+
+
+    container.appendChild(toast);
+
+
+    setTimeout(
+        () => {
+
+            if (toast.parentNode) {
+
+                toast.remove();
+
+            }
+
+        },
+        3000
+    );
+
+}
+
+</script>
+
+{% endblock %}
