@@ -1,0 +1,694 @@
+{% extends "user_base.html" %}
+{% load static %}
+
+{% block title %}My Cart{% endblock %}
+
+{% block content %}
+
+<style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f6f8;
+            color: #222;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 40px auto;
+        }
+
+        .cart-title {
+            font-size: 30px;
+            font-weight: 600;
+            margin-bottom: 25px;
+        }
+
+        .message-container {
+            margin-bottom: 20px;
+        }
+
+        .message {
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            background: #e8f4ff;
+            color: #174a6e;
+        }
+
+        .cart-layout {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 25px;
+            align-items: start;
+        }
+
+        .cart-items {
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .cart-item {
+            display: flex;
+            gap: 20px;
+            padding: 20px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .cart-item:first-child {
+            padding-top: 0;
+        }
+
+        .cart-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .product-image {
+            width: 130px;
+            height: 130px;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #f1f1f1;
+            flex-shrink: 0;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .product-info {
+            flex: 1;
+        }
+
+        .product-name {
+            font-size: 19px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .product-name a {
+            text-decoration: none;
+            color: #222;
+        }
+
+        .product-name a:hover {
+            color: #315170;
+        }
+
+        .product-price {
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+
+        .discount-price {
+            font-weight: 600;
+            color: #222;
+        }
+
+        .sale-price {
+            color: #777;
+        }
+
+        .old-price {
+            text-decoration: line-through;
+            color: #999;
+            margin-left: 8px;
+        }
+
+        .quantity-area {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .quantity-label {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .quantity-box {
+            display: flex;
+            align-items: center;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .quantity-box button {
+            width: 35px;
+            height: 34px;
+            border: none;
+            background: #f3f3f3;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .quantity-box button:hover {
+            background: #e4e4e4;
+        }
+
+        .quantity-value {
+            min-width: 40px;
+            text-align: center;
+            font-size: 15px;
+        }
+
+        .remove-form {
+            margin-top: 15px;
+        }
+
+        .remove-btn {
+            border: none;
+            background: none;
+            color: #d33;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 0;
+        }
+
+        .remove-btn:hover {
+            text-decoration: underline;
+        }
+
+        .warning {
+            margin-top: 12px;
+            padding: 9px 12px;
+            border-radius: 5px;
+            background: #fff3cd;
+            color: #856404;
+            font-size: 14px;
+        }
+
+        .danger {
+            margin-top: 12px;
+            padding: 9px 12px;
+            border-radius: 5px;
+            background: #f8d7da;
+            color: #842029;
+            font-size: 14px;
+        }
+
+        .invalid-item {
+            opacity: 0.65;
+        }
+
+        .cart-summary {
+            background: #fff;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            position: sticky;
+            top: 20px;
+        }
+
+        .summary-title {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            color: #555;
+        }
+
+        .summary-total {
+            border-top: 1px solid #ddd;
+            padding-top: 15px;
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .checkout-btn {
+            display: block;
+            width: 100%;
+            margin-top: 25px;
+            padding: 13px;
+            background: #315170;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .checkout-btn:hover {
+            background: #243f58;
+        }
+
+        .disabled-btn {
+            background: #aaa;
+            cursor: not-allowed;
+        }
+
+        .empty-cart {
+            background: #fff;
+            padding: 60px 20px;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .empty-cart h2 {
+            margin-bottom: 12px;
+            font-size: 25px;
+        }
+
+        .empty-cart p {
+            color: #777;
+            margin-bottom: 25px;
+        }
+
+        .shop-btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background: #315170;
+            color: #fff;
+            border-radius: 6px;
+            text-decoration: none;
+        }
+
+        .shop-btn:hover {
+            background: #243f58;
+        }
+
+        @media (max-width: 850px) {
+            .cart-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .cart-summary {
+                position: static;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                width: 95%;
+                margin: 25px auto;
+            }
+
+            .cart-item {
+                flex-direction: column;
+            }
+
+            .product-image {
+                width: 100%;
+                height: 220px;
+            }
+        }
+</style>
+
+<div class="container">
+
+    <h1 class="cart-title">My Cart</h1>
+
+    {% if item.is_out_of_stock %}
+
+    <div class="cart-item disabled">
+        <div class="product-info">
+
+            {% if item.product %}
+                <h5>{{ item.product.name }}</h5>
+            {% endif %}
+
+            <span class="badge bg-danger">
+                Out of Stock
+            </span>
+
+        </div>
+
+        <p class="text-danger">
+            This product is currently out of stock.
+        </p>
+    </div>
+
+{% else %}
+
+    {% if cart_items %}
+
+        <div class="cart-layout">
+
+            <!-- ================= CART ITEMS ================= -->
+            <div class="cart-items">
+
+                {% for item in cart_items %}
+
+                    <div class="cart-item {% if item.is_invalid %}invalid-item{% endif %}">
+
+                        <!-- Product Image -->
+                       <div class="product-image">
+
+                            {% if item.product %}
+
+                                {% with product_image=item.product.images.first %}
+
+                                    {% if product_image %}
+                                        <img
+                                            src="{{ product_image.image.url }}"
+                                            alt="{{ item.product.name }}"
+                                        >
+                                    {% else %}
+                                        <img
+                                            src="{% static 'images/no-image.png' %}"
+                                            alt="No image"
+                                        >
+                                    {% endif %}
+
+                                {% endwith %}
+
+                            {% else %}
+
+                                <img
+                                    src="{% static 'images/no-image.png' %}"
+                                    alt="Product unavailable"
+                                >
+
+                            {% endif %}
+
+                        </div>
+
+                        <!-- Product Information -->
+                        <div class="product-info">
+
+                            {% if item.product %}
+
+                                <div class="product-name">
+                                    {{ item.product.name }}
+                                </div>
+
+
+                                <!-- Price -->
+                                <div class="product-price">
+
+                                    {% if item.product.discount_price %}
+
+                                        <span class="discount-price">
+                                            ₹{{ item.product.discount_price }}
+                                        </span>
+
+                                        <span class="old-price">
+                                            ₹{{ item.product.sale_price }}
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="sale-price">
+                                            ₹{{ item.product.sale_price }}
+                                        </span>
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <!-- ================= INVALID PRODUCT ================= -->
+                                {% if item.is_invalid %}
+
+                                    <div class="danger">
+                                        This product is currently unavailable.
+                                    </div>
+
+                                {% else %}
+
+
+                                    <!-- ================= OUT OF STOCK ================= -->
+                                    {% if item.is_out_of_stock %}
+
+                                        <div class="danger">
+                                            This product is currently out of stock.
+                                        </div>
+
+
+                                    <!-- ================= EXCEEDED STOCK ================= -->
+                                    {% elif item.has_exceeded_stock %}
+
+                                        <div class="warning">
+                                            Only {{ item.product.quantity }}
+                                            item(s) are currently available.
+                                        </div>
+
+                                    {% endif %}
+
+
+                                    <!-- ================= QUANTITY ================= -->
+                                    <div class="quantity-area">
+
+                                        <span class="quantity-label">
+                                            Quantity:
+                                        </span>
+
+                                        <div class="quantity-box">
+
+                                            <!-- Decrement -->
+                                            <form
+                                                method="POST"
+                                                action="{% url 'cart:decrement_cart' %}"
+                                            >
+
+                                                {% csrf_token %}
+
+                                                <input
+                                                    type="hidden"
+                                                    name="cart_id"
+                                                    value="{{ item.id }}"
+                                                >
+
+                                                <button
+                                                    type="submit"
+                                                    class="quantity-btn"
+                                                    {% if item.is_out_of_stock %}disabled{% endif %}
+                                                >
+                                                    -
+                                                </button>
+
+                                            </form>
+
+
+                                            <span class="quantity-value">
+                                                {{ item.quantity }}
+                                            </span>
+
+
+                                            <!-- Increment -->
+                                            <form
+                                                method="POST"
+                                                action="{% url 'cart:increment_cart' %}"
+                                            >
+
+                                                {% csrf_token %}
+
+                                                <input
+                                                    type="hidden"
+                                                    name="cart_id"
+                                                    value="{{ item.id }}"
+                                                >
+
+                                                <button
+                                                    type="submit"
+                                                    {% if item.is_out_of_stock or item.has_exceeded_stock %}disabled{% endif %}
+                                                >
+                                                    +
+                                                </button>
+
+                                            </form>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- ================= SUBTOTAL ================= -->
+                                    <div style="margin-top: 12px; font-weight: 600;">
+                                        Subtotal:
+                                        ₹{{ item.subtotal }}
+                                    </div>
+
+                                {% endif %}
+
+
+                                <!-- ================= REMOVE ================= -->
+                                <form
+                                    method="POST"
+                                    action="{% url 'cart:remove_from_cart' %}"
+                                    class="remove-form"
+                                >
+                                    {% csrf_token %}
+
+                                    <input
+                                        type="hidden"
+                                        name="item_id"
+                                        value="{{ item.id }}"
+                                    >
+
+                                    <button type="submit" class="remove-btn">
+                                        Remove
+                                    </button>
+                                </form>
+
+
+                            {% else %}
+
+                                <div class="product-name">
+                                    Product unavailable
+                                </div>
+
+                                <div class="danger">
+                                    This product is no longer available.
+                                </div>
+
+                                <form
+                                    method="POST"
+                                    action="{% url 'cart:remove_from_cart' %}"
+                                    class="remove-form"
+                                >
+
+                                    {% csrf_token %}
+
+                                    <input
+                                        type="hidden"
+                                        name="item_id"
+                                        value="{{ item.id }}"
+                                    >
+
+                                    <button
+                                        type="submit"
+                                        class="remove-btn"
+                                    >
+                                        Remove
+                                    </button>
+
+                                </form>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+
+            <!-- ================= CART SUMMARY ================= -->
+            <div class="cart-summary">
+
+                <div class="summary-title">
+                    Cart Summary
+                </div>
+
+
+                <div class="summary-row">
+                    <span>Cart Total</span>
+                    <span>₹{{ cart_total }}</span>
+                </div>
+
+
+                <div class="summary-row">
+                    <span>Shipping</span>
+
+                    {% if shipping_charge == 0 %}
+                        <span>Free</span>
+                    {% else %}
+                        <span>₹{{ shipping_charge }}</span>
+                    {% endif %}
+
+                </div>
+
+
+                <div class="summary-total">
+                    <span>Total</span>
+                    <span>₹{{ grand_total }}</span>
+                </div>
+
+
+                <!-- Checkout disabled when cart has problems -->
+                {% if has_invalid_items or has_out_of_stock_items or has_exceeded_stock_items %}
+
+                    <button
+                        type="button"
+                        class="checkout-btn disabled-btn"
+                        disabled
+                    >
+                        Cannot Proceed to Checkout
+                    </button>
+
+                    <p style="
+                        margin-top: 12px;
+                        font-size: 13px;
+                        color: #777;
+                        text-align: center;
+                    ">
+                        Please remove unavailable products or adjust quantities
+                        before checkout.
+                    </p>
+
+                {% else %}
+
+                    <a
+                        href="{% url 'orders:checkout' %}"
+                        class="checkout-btn"
+                    >
+                        Proceed to Checkout
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+    {% else %}
+
+        <!-- ================= EMPTY CART ================= -->
+
+        <div class="empty-cart">
+
+            <h2>Your cart is empty</h2>
+
+            <p>
+                You haven't added any products to your cart yet.
+            </p>
+
+            <a
+                href="{% url 'products:products' %}"
+                class="shop-btn"
+            >
+                Continue Shopping
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endif %}
+
+
+
+
+    
+{% endblock %}
+
