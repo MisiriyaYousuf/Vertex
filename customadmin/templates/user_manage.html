@@ -1,0 +1,197 @@
+{% extends 'admin_base.html' %}
+
+{% block title %}
+User Management - Admin Panel
+{% endblock %}
+
+{% block navbar_icon %}
+users
+{% endblock %}
+
+{% block navbar_title %}
+User Management
+{% endblock %}
+
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+
+    <div>
+        <h5 class="mb-0">Manage Users</h5>
+
+        <p class="text-muted mb-0">
+            View and manage all registered users.
+        </p>
+    </div>
+
+    <button
+        type="button"
+        style="font-size: 15px; background-color: #315170; color: white; border:none"
+    >
+        Total Users : {{ profiles|length }}
+    </button>
+
+</div>
+
+
+<div class="user-table-wrapper">
+
+    <table class="table table-hover">
+
+        <thead>
+            <tr>
+                <th>Sl.no</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Joined</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+
+
+        <tbody>
+
+            {% for profile in profiles %}
+
+            <tr>
+
+                <!-- Sl.no -->
+                <td>
+                    {{ forloop.counter }}
+                </td>
+
+
+                <!-- Username -->
+                <td>
+                    <strong>
+                        {{ profile.user.username }}
+                    </strong>
+                </td>
+
+
+                <!-- Email -->
+                <td>
+                    {{ profile.user.email }}
+                </td>
+
+
+                <!-- Phone -->
+                <td>
+                    {{ profile.phone }}
+                </td>
+
+
+                <!-- Joined -->
+                <td>
+                    {{ profile.user.date_joined|date:"M d, Y" }}
+                </td>
+
+
+                <!-- Status -->
+                <td>
+
+                    {% if profile.blocked %}
+
+                        <span class="badge bg-danger">
+                            Blocked
+                        </span>
+
+                    {% else %}
+
+                        <span class="badge bg-success">
+                            Active
+                        </span>
+
+                    {% endif %}
+
+                </td>
+
+
+                <!-- Action -->
+                <td>
+
+                    {% if profile.blocked %}
+
+                        <!-- UNBLOCK -->
+                        <form
+                            method="POST"
+                            action="{% url 'customadmin:unblock_user' %}"
+                            style="display:inline;"
+                        >
+
+                            {% csrf_token %}
+
+                            <input
+                                type="hidden"
+                                name="profile_id"
+                                value="{{ profile.id }}"
+                            >
+
+                            <button
+                                type="submit"
+                                class="btn btn-success btn-sm"
+                            >
+                                Unblock
+                            </button>
+
+                        </form>
+
+                    {% else %}
+
+                        <!-- BLOCK -->
+                        <form
+                            method="POST"
+                            action="{% url 'customadmin:block_user' %}"
+                            style="display:inline;"
+                        >
+
+                            {% csrf_token %}
+
+                            <input
+                                type="hidden"
+                                name="profile_id"
+                                value="{{ profile.id }}"
+                            >
+
+                            <button
+                                type="submit"
+                                class="btn btn-danger btn-sm"
+                            >
+                                Block
+                            </button>
+
+                        </form>
+
+                    {% endif %}
+
+                </td>
+
+            </tr>
+
+
+            {% empty %}
+
+            <tr>
+
+                <td colspan="7" class="text-center py-4">
+
+                    <p class="text-muted mb-0">
+                        No users found.
+                    </p>
+
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+{% endblock %}

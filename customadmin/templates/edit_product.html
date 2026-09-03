@@ -1,0 +1,2111 @@
+{% extends "admin_base.html" %}
+
+{% load static %}
+
+{% block title %}
+    Edit Product
+{% endblock %}
+
+
+{% block extra_css %}
+
+<style>
+
+    /* =========================================================
+       PAGE
+    ========================================================= */
+
+    .edit-product-page {
+        min-height: 100vh;
+        padding: 24px 20px 50px;
+        background: #f6f8fb;
+    }
+
+
+    .edit-product-container {
+        max-width: 1300px;
+        margin: 0 auto;
+    }
+
+
+    /* =========================================================
+       MAIN CARD
+    ========================================================= */
+
+    .edit-product-card {
+        background: #ffffff;
+        border: 1px solid #e5e9ef;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 8px 30px rgba(20, 30, 50, 0.06);
+    }
+
+
+    /* =========================================================
+       HEADER
+    ========================================================= */
+
+    .edit-product-header {
+        padding: 22px 28px;
+        border-bottom: 1px solid #edf0f4;
+    }
+
+
+    .edit-product-header h2 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: 700;
+        color: #172033;
+    }
+
+
+    .edit-product-header p {
+        margin: 5px 0 0;
+        color: #7c8797;
+        font-size: 13px;
+    }
+
+
+    /* =========================================================
+       BODY
+    ========================================================= */
+
+    .edit-product-body {
+        padding: 28px;
+    }
+
+
+    /* =========================================================
+       SECTIONS
+    ========================================================= */
+
+    .section {
+        padding-bottom: 28px;
+        margin-bottom: 28px;
+        border-bottom: 1px solid #edf0f4;
+    }
+
+
+    .section:last-of-type {
+        border-bottom: none;
+        margin-bottom: 0;
+    }
+
+
+    .section-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+
+    .section-number {
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        background: #172033;
+        color: #ffffff;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        font-size: 11px;
+        font-weight: 700;
+
+        flex-shrink: 0;
+    }
+
+
+    .section-title h5 {
+        margin: 0;
+        font-weight: 700;
+        color: #273142;
+    }
+
+
+    .section-title p {
+        margin: 2px 0 0;
+        font-size: 12px;
+        color: #8993a2;
+    }
+
+
+    /* =========================================================
+       FORM
+    ========================================================= */
+
+    .form-label,
+    .modern-label {
+        font-size: 13px;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 7px;
+    }
+
+
+    .modern-label span {
+        color: #dc3545;
+    }
+
+
+    .form-control,
+    .form-select {
+        min-height: 42px;
+        border-radius: 8px;
+        border: 1px solid #dfe4ea;
+        font-size: 14px;
+    }
+
+
+    textarea.form-control {
+        min-height: 110px;
+    }
+
+
+    /* =========================================================
+       STATUS
+    ========================================================= */
+
+    .status-box {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 25px;
+
+        padding: 14px 16px;
+
+        background: #f8f9fb;
+
+        border: 1px solid #edf0f4;
+
+        border-radius: 10px;
+    }
+
+
+    /* =========================================================
+       IMAGE GRID
+    ========================================================= */
+
+    .existing-images,
+    .variant-existing-images,
+    .image-preview-container {
+
+        display: flex;
+
+        flex-wrap: wrap;
+
+        gap: 12px;
+    }
+
+
+    /* =========================================================
+       IMAGE CARD
+    ========================================================= */
+
+    .image-card {
+
+        position: relative;
+
+        width: 95px;
+        height: 95px;
+
+        border: 1px solid #e1e6ec;
+
+        border-radius: 10px;
+
+        overflow: hidden;
+
+        background: #ffffff;
+
+        transition: all 0.2s ease;
+    }
+
+
+    .image-card:hover {
+
+        border-color: #bfc7d1;
+
+        box-shadow:
+            0 5px 15px
+            rgba(20, 30, 50, 0.08);
+    }
+
+
+    .image-card img {
+
+        width: 100%;
+        height: 100%;
+
+        object-fit: contain;
+
+        display: block;
+    }
+
+
+    /* =========================================================
+       DELETE IMAGE BUTTON
+    ========================================================= */
+
+    .delete-image-btn {
+
+        position: absolute;
+
+        top: 6px;
+        right: 6px;
+
+        width: 28px;
+        height: 28px;
+
+        border: none;
+
+        border-radius: 50%;
+
+        background: rgba(220, 53, 69, 0.95);
+
+        color: #ffffff;
+
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        cursor: pointer;
+
+        font-size: 12px;
+
+        opacity: 0;
+
+        transform: scale(0.8);
+
+        transition: all 0.2s ease;
+
+        z-index: 5;
+    }
+
+
+    .image-card:hover .delete-image-btn {
+
+        opacity: 1;
+
+        transform: scale(1);
+    }
+
+
+    .delete-image-btn:hover {
+
+        background: #b02a37;
+
+        transform: scale(1.08) !important;
+    }
+
+
+    /* =========================================================
+       DELETE LOADING STATE
+    ========================================================= */
+
+    .image-card.deleting {
+
+        opacity: 0.55;
+
+        pointer-events: none;
+    }
+
+
+    .image-card.deleting::after {
+
+        content: "";
+
+        position: absolute;
+
+        inset: 0;
+
+        background: rgba(255, 255, 255, 0.45);
+    }
+
+
+    /* =========================================================
+       NEW IMAGE PREVIEW
+    ========================================================= */
+
+    .preview-image {
+
+        width: 95px;
+        height: 95px;
+
+        border: 1px solid #e1e6ec;
+
+        border-radius: 10px;
+
+        overflow: hidden;
+
+        background: #ffffff;
+    }
+
+
+    .preview-image img {
+
+        width: 100%;
+        height: 100%;
+
+        object-fit: contain;
+    }
+
+
+    /* =========================================================
+       UPLOAD
+    ========================================================= */
+
+    .upload-box {
+
+        padding: 18px;
+
+        border: 2px dashed #d8dee7;
+
+        border-radius: 12px;
+
+        background: #fafbfd;
+    }
+
+
+    .upload-box h6 {
+
+        margin-bottom: 5px;
+
+        font-weight: 700;
+    }
+
+
+    .upload-box p {
+
+        margin-bottom: 12px;
+
+        font-size: 12px;
+
+        color: #8993a2;
+    }
+
+
+    /* =========================================================
+       VARIANTS
+    ========================================================= */
+
+    .add-variant-btn {
+
+        margin-left: auto;
+
+        background: #172033;
+
+        color: #ffffff;
+
+        padding: 9px 15px;
+
+        border-radius: 8px;
+
+        font-size: 13px;
+
+        border: none;
+    }
+
+
+    .add-variant-btn:hover {
+
+        background: #273142;
+
+        color: #ffffff;
+    }
+
+
+    .variant-card {
+
+        border: 1px solid #e3e7ed;
+
+        border-radius: 14px;
+
+        margin-bottom: 18px;
+
+        overflow: hidden;
+
+        background: #ffffff;
+    }
+
+
+    .variant-card-header {
+
+        padding: 14px 18px;
+
+        background: #f8f9fb;
+
+        border-bottom: 1px solid #e9edf2;
+
+        display: flex;
+
+        justify-content: space-between;
+
+        align-items: center;
+    }
+
+
+    .variant-label {
+
+        font-size: 10px;
+
+        font-weight: 700;
+
+        color: #8a94a3;
+
+        letter-spacing: 0.5px;
+    }
+
+
+    .variant-title {
+
+        margin: 3px 0 0;
+
+        font-weight: 700;
+
+        color: #273142;
+    }
+
+
+    .remove-variant {
+
+        width: 34px;
+        height: 34px;
+
+        border: none;
+
+        border-radius: 8px;
+
+        background: #fff1f1;
+
+        color: #dc3545;
+
+        font-size: 20px;
+
+        cursor: pointer;
+    }
+
+
+    .variant-card-body {
+
+        padding: 20px;
+    }
+
+
+    .variant-upload-area {
+
+        margin-top: 10px;
+    }
+
+
+    /* =========================================================
+       ACTIONS
+    ========================================================= */
+
+    .form-actions {
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        gap: 12px;
+
+        margin-top: 15px;
+
+        padding-top: 20px;
+
+        border-top: 1px solid #edf0f4;
+    }
+
+
+    .back-btn {
+
+        padding: 10px 17px;
+
+        border: 1px solid #dfe4eb;
+
+        border-radius: 8px;
+
+        text-decoration: none;
+
+        color: #273142;
+
+        font-size: 13px;
+
+        font-weight: 600;
+
+        transition: 0.2s ease;
+    }
+
+
+    .back-btn:hover {
+
+        background: #172033;
+
+        border-color: #172033;
+
+        color: #ffffff;
+    }
+
+
+    .save-btn {
+
+        background: #172033;
+
+        color: #ffffff;
+
+        padding: 11px 22px;
+
+        border-radius: 8px;
+
+        border: none;
+
+        font-weight: 600;
+    }
+
+
+    .save-btn:hover {
+
+        background: #273142;
+
+        color: #ffffff;
+    }
+
+
+    /* =========================================================
+       RESPONSIVE
+    ========================================================= */
+
+    @media (max-width: 768px) {
+
+        .edit-product-page {
+
+            padding:
+                15px
+                10px
+                40px;
+        }
+
+
+        .edit-product-body {
+
+            padding: 18px;
+        }
+
+
+        .status-box {
+
+            flex-direction: column;
+
+            gap: 10px;
+        }
+
+
+        .section-title {
+
+            align-items: flex-start;
+        }
+
+
+        .form-actions {
+
+            flex-direction: column-reverse;
+        }
+
+
+        .form-actions > * {
+
+            width: 100%;
+
+            text-align: center;
+        }
+
+    }
+
+</style>
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="edit-product-page">
+
+    <div class="edit-product-container">
+
+        <div class="edit-product-card">
+
+
+            <!-- =================================================
+                 HEADER
+            ================================================== -->
+
+            <div class="edit-product-header">
+
+                <h2>
+                    Edit Product
+                </h2>
+
+                <p>
+                    Update product details, images and variants.
+                </p>
+
+            </div>
+
+
+            <div class="edit-product-body">
+
+
+                <form
+                    method="POST"
+                    enctype="multipart/form-data"
+                    id="productForm"
+                >
+
+                    {% csrf_token %}
+
+
+                    <!-- =================================================
+                         ERRORS
+                    ================================================== -->
+
+                    {% if form.non_field_errors %}
+
+                        <div class="alert alert-danger">
+
+                            {% for error in form.non_field_errors %}
+
+                                <div>
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <!-- =================================================
+                         PRODUCT INFORMATION
+                    ================================================== -->
+
+                    <div class="section">
+
+                        <div class="section-title">
+
+                            <div class="section-number">
+                                01
+                            </div>
+
+                            <div>
+
+                                <h5>
+                                    Product Information
+                                </h5>
+
+                                <p>
+                                    Update the basic product details.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="row">
+
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+                                    Category
+                                </label>
+
+                                {{ form.category }}
+
+                                {{ form.category.errors }}
+
+                            </div>
+
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+                                    Product Name
+                                </label>
+
+                                {{ form.name }}
+
+                                {{ form.name.errors }}
+
+                            </div>
+
+
+                            <div class="col-md-12 mb-3">
+
+                                <label class="form-label">
+                                    Description
+                                </label>
+
+                                {{ form.description }}
+
+                                {{ form.description.errors }}
+
+                            </div>
+
+
+                            <div class="col-md-4 mb-3">
+
+                                <label class="form-label">
+                                    Sale Price
+                                </label>
+
+                                {{ form.sale_price }}
+
+                                {{ form.sale_price.errors }}
+
+                            </div>
+
+
+                            <div class="col-md-4 mb-3">
+
+                                <label class="form-label">
+                                    Discount Price
+                                </label>
+
+                                {{ form.discount_price }}
+
+                                {{ form.discount_price.errors }}
+
+                            </div>
+
+
+                            <div class="col-md-4 mb-3">
+
+                                <label class="form-label">
+                                    Quantity
+                                </label>
+
+                                {{ form.quantity }}
+
+                                {{ form.quantity.errors }}
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="status-box">
+
+                            <div class="form-check">
+
+                                {{ form.is_active }}
+
+                                <label class="form-check-label">
+                                    Active Product
+                                </label>
+
+                            </div>
+
+
+                            <div class="form-check">
+
+                                {{ form.featured }}
+
+                                <label class="form-check-label">
+                                    Featured Product
+                                </label>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         PRODUCT IMAGES
+                    ================================================== -->
+
+                    <div class="section">
+
+                        <div class="section-title">
+
+                            <div class="section-number">
+                                02
+                            </div>
+
+                            <div>
+
+                                <h5>
+                                    Product Images
+                                </h5>
+
+                                <p>
+                                    Delete existing images or upload new ones.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        {% if product_images %}
+
+                            <div class="mb-4">
+
+                                <label class="form-label">
+                                    Existing Images
+                                </label>
+
+
+                                <div class="existing-images">
+
+                                    {% for image in product_images %}
+
+                                        <div
+                                            class="image-card existing-product-image"
+                                            data-image-id="{{ image.id }}"
+                                        >
+
+                                            <img
+                                                src="{{ image.image.url }}"
+                                                alt="{{ product.name }}"
+                                            >
+
+
+                                            <button
+                                                type="button"
+                                                class="delete-image-btn delete-product-image"
+                                                data-image-id="{{ image.id }}"
+                                                title="Delete image"
+                                            >
+
+                                                <i class="fas fa-trash"></i>
+
+                                            </button>
+
+                                        </div>
+
+                                    {% endfor %}
+
+                                </div>
+
+                            </div>
+
+                        {% endif %}
+
+
+                        <div class="upload-box">
+
+                            <h6>
+                                Add More Product Images
+                            </h6>
+
+                            <p>
+                                JPG, PNG or WEBP · Maximum 5 MB each
+                            </p>
+
+
+                            <input
+                                type="file"
+                                name="product_images"
+                                id="productImages"
+                                class="form-control"
+                                multiple
+                                accept="image/jpeg,image/png,image/webp"
+                            >
+
+                        </div>
+
+
+                        <div
+                            id="productImagePreview"
+                            class="image-preview-container mt-3"
+                        ></div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         VARIANTS
+                    ================================================== -->
+
+                    <div class="section">
+
+                        <div class="section-title">
+
+                            <div class="section-number">
+                                03
+                            </div>
+
+                            <div>
+
+                                <h5>
+                                    Product Variants
+                                </h5>
+
+                                <p>
+                                    Edit variants, delete images or add new variants.
+                                </p>
+
+                            </div>
+
+
+                            <button
+                                type="button"
+                                id="addVariant"
+                                class="btn add-variant-btn"
+                            >
+
+                                <i class="fas fa-plus me-1"></i>
+
+                                Add Variant
+
+                            </button>
+
+                        </div>
+
+
+                        <div id="variantContainer">
+
+
+                            {% for variant in variants %}
+
+                                <div
+                                    class="variant-card"
+                                    data-variant-id="{{ variant.id }}"
+                                >
+
+
+                                    <div class="variant-card-header">
+
+                                        <div>
+
+                                            <span class="variant-label">
+
+                                                VARIANT
+                                                {{ forloop.counter }}
+
+                                            </span>
+
+
+                                            <h6 class="variant-title">
+
+                                                {{ variant.color }}
+
+                                                {% if variant.size %}
+
+                                                    · {{ variant.size }}
+
+                                                {% endif %}
+
+                                            </h6>
+
+                                        </div>
+
+
+                                        <button
+                                            type="button"
+                                            class="remove-variant"
+                                        >
+
+                                            ×
+
+                                        </button>
+
+                                    </div>
+
+
+                                    <div class="variant-card-body">
+
+
+                                        <input
+                                            type="hidden"
+                                            name="variant_index"
+                                            value="existing_{{ variant.id }}"
+                                        >
+
+
+                                        <input
+                                            type="hidden"
+                                            name="variant_id_existing_{{ variant.id }}"
+                                            value="{{ variant.id }}"
+                                        >
+
+
+                                        <div class="row">
+
+
+                                            <div class="col-md-3 mb-3">
+
+                                                <label class="modern-label">
+
+                                                    Color
+
+                                                    <span>*</span>
+
+                                                </label>
+
+
+                                                <input
+                                                    type="text"
+                                                    class="form-control"
+                                                    name="variant_color_existing_{{ variant.id }}"
+                                                    value="{{ variant.color }}"
+                                                    required
+                                                >
+
+                                            </div>
+
+
+                                            <div class="col-md-3 mb-3">
+
+                                                <label class="modern-label">
+
+                                                    Size
+
+                                                    <span>*</span>
+
+                                                </label>
+
+
+                                                <input
+                                                    type="text"
+                                                    class="form-control"
+                                                    name="variant_size_existing_{{ variant.id }}"
+                                                    value="{{ variant.size }}"
+                                                    required
+                                                >
+
+                                            </div>
+
+
+                                            <div class="col-md-3 mb-3">
+
+                                                <label class="modern-label">
+
+                                                    SKU
+
+                                                    <span>*</span>
+
+                                                </label>
+
+
+                                                <input
+                                                    type="text"
+                                                    class="form-control"
+                                                    name="variant_sku_existing_{{ variant.id }}"
+                                                    value="{{ variant.sku }}"
+                                                    required
+                                                >
+
+                                            </div>
+
+
+                                            <div class="col-md-3 mb-3">
+
+                                                <label class="modern-label">
+
+                                                    Quantity
+
+                                                    <span>*</span>
+
+                                                </label>
+
+
+                                                <input
+                                                    type="number"
+                                                    class="form-control"
+                                                    name="variant_quantity_existing_{{ variant.id }}"
+                                                    value="{{ variant.quantity }}"
+                                                    min="0"
+                                                    required
+                                                >
+
+                                            </div>
+
+                                        </div>
+
+
+                                        <!-- =================================================
+                                             EXISTING VARIANT IMAGES
+                                        ================================================== -->
+
+                                        {% if variant.images.all %}
+
+                                            <div class="mb-3">
+
+                                                <label class="modern-label">
+
+                                                    Existing Variant Images
+
+                                                </label>
+
+
+                                                <div class="variant-existing-images">
+
+                                                    {% for image in variant.images.all %}
+
+                                                        <div
+                                                            class="image-card existing-variant-image"
+                                                            data-image-id="{{ image.id }}"
+                                                        >
+
+                                                            <img
+                                                                src="{{ image.image.url }}"
+                                                                alt="{{ variant.color }}"
+                                                            >
+
+
+                                                            <button
+                                                                type="button"
+                                                                class="delete-image-btn delete-variant-image"
+                                                                data-image-id="{{ image.id }}"
+                                                                title="Delete variant image"
+                                                            >
+
+                                                                <i class="fas fa-trash"></i>
+
+                                                            </button>
+
+                                                        </div>
+
+                                                    {% endfor %}
+
+                                                </div>
+
+                                            </div>
+
+                                        {% endif %}
+
+
+                                        <!-- =================================================
+                                             ADD VARIANT IMAGES
+                                        ================================================== -->
+
+                                        <div class="variant-upload-area">
+
+                                            <label class="modern-label">
+
+                                                Add Variant Images
+
+                                            </label>
+
+
+                                            <input
+                                                type="file"
+                                                name="variant_images_existing_{{ variant.id }}"
+                                                class="form-control variant-image-input"
+                                                multiple
+                                                accept="image/jpeg,image/png,image/webp"
+                                            >
+
+                                        </div>
+
+
+                                        <div
+                                            class="variant-image-preview image-preview-container mt-3"
+                                        ></div>
+
+
+                                    </div>
+
+                                </div>
+
+                            {% endfor %}
+
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         ACTIONS
+                    ================================================== -->
+
+                    <div class="form-actions">
+
+
+                        <a
+                            href="{% url 'customadmin:list_product' %}"
+                            class="back-btn"
+                        >
+
+                            <i class="fas fa-arrow-left me-1"></i>
+
+                            Back to Products
+
+                        </a>
+
+
+                        <button
+                            type="submit"
+                            class="btn save-btn"
+                        >
+
+                            <i class="fas fa-save me-1"></i>
+
+                            Update Product
+
+                        </button>
+
+                    </div>
+
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     NEW VARIANT TEMPLATE
+========================================================= -->
+
+<template id="variantTemplate">
+
+    <div class="variant-card">
+
+        <div class="variant-card-header">
+
+            <div>
+
+                <span class="variant-label">
+                    NEW VARIANT
+                </span>
+
+                <h6 class="variant-title">
+                    Product Variant
+                </h6>
+
+            </div>
+
+
+            <button
+                type="button"
+                class="remove-variant"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="variant-card-body">
+
+
+            <input
+                type="hidden"
+                name="variant_index"
+                class="variant-index"
+            >
+
+
+            <div class="row">
+
+
+                <div class="col-md-3 mb-3">
+
+                    <label class="modern-label">
+
+                        Color
+
+                        <span>*</span>
+
+                    </label>
+
+
+                    <input
+                        type="text"
+                        class="form-control variant-color"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="col-md-3 mb-3">
+
+                    <label class="modern-label">
+
+                        Size
+
+                        <span>*</span>
+
+                    </label>
+
+
+                    <input
+                        type="text"
+                        class="form-control variant-size"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="col-md-3 mb-3">
+
+                    <label class="modern-label">
+
+                        SKU
+
+                        <span>*</span>
+
+                    </label>
+
+
+                    <input
+                        type="text"
+                        class="form-control variant-sku"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="col-md-3 mb-3">
+
+                    <label class="modern-label">
+
+                        Quantity
+
+                        <span>*</span>
+
+                    </label>
+
+
+                    <input
+                        type="number"
+                        class="form-control variant-quantity"
+                        min="0"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="variant-upload-area">
+
+                <label class="modern-label">
+
+                    Variant Images
+
+                    <span>*</span>
+
+                </label>
+
+
+                <input
+                    type="file"
+                    class="form-control variant-image-input"
+                    multiple
+                    accept="image/jpeg,image/png,image/webp"
+                    required
+                >
+
+            </div>
+
+
+            <div
+                class="variant-image-preview image-preview-container mt-3"
+            ></div>
+
+
+        </div>
+
+    </div>
+
+</template>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script>
+
+    /* =========================================================
+       CSRF
+    ========================================================= */
+
+    function getCookie(name) {
+
+        let cookieValue = null;
+
+
+        if (
+            document.cookie &&
+            document.cookie !== ""
+        ) {
+
+            const cookies =
+                document.cookie.split(";");
+
+
+            for (
+                let i = 0;
+                i < cookies.length;
+                i++
+            ) {
+
+                const cookie =
+                    cookies[i].trim();
+
+
+                if (
+                    cookie.substring(
+                        0,
+                        name.length + 1
+                    ) ===
+                    (name + "=")
+                ) {
+
+                    cookieValue =
+                        decodeURIComponent(
+                            cookie.substring(
+                                name.length + 1
+                            )
+                        );
+
+                    break;
+                }
+
+            }
+
+        }
+
+
+        return cookieValue;
+    }
+
+
+    const csrfToken =
+        getCookie("csrftoken");
+
+
+    /* =========================================================
+       VARIANT COUNTER
+    ========================================================= */
+
+    let variantCounter = 0;
+
+
+    const variantContainer =
+        document.getElementById(
+            "variantContainer"
+        );
+
+
+    const variantTemplate =
+        document.getElementById(
+            "variantTemplate"
+        );
+
+
+    /* =========================================================
+       ADD VARIANT
+    ========================================================= */
+
+    document
+        .getElementById("addVariant")
+        .addEventListener(
+            "click",
+            function() {
+
+                const index =
+                    "new_" +
+                    variantCounter;
+
+
+                variantCounter++;
+
+
+                const clone =
+                    variantTemplate
+                        .content
+                        .cloneNode(true);
+
+
+                const card =
+                    clone.querySelector(
+                        ".variant-card"
+                    );
+
+
+                card.querySelector(
+                    ".variant-index"
+                ).value = index;
+
+
+                card.querySelector(
+                    ".variant-color"
+                ).name =
+                    `variant_color_${index}`;
+
+
+                card.querySelector(
+                    ".variant-size"
+                ).name =
+                    `variant_size_${index}`;
+
+
+                card.querySelector(
+                    ".variant-sku"
+                ).name =
+                    `variant_sku_${index}`;
+
+
+                card.querySelector(
+                    ".variant-quantity"
+                ).name =
+                    `variant_quantity_${index}`;
+
+
+                card.querySelector(
+                    ".variant-image-input"
+                ).name =
+                    `variant_images_${index}`;
+
+
+                variantContainer.appendChild(
+                    card
+                );
+
+            }
+        );
+
+
+    /* =========================================================
+       REMOVE VARIANT
+    ========================================================= */
+
+    document.addEventListener(
+        "click",
+        function(event) {
+
+            const removeButton =
+                event.target.closest(
+                    ".remove-variant"
+                );
+
+
+            if (!removeButton) {
+                return;
+            }
+
+
+            const card =
+                removeButton.closest(
+                    ".variant-card"
+                );
+
+
+            const cards =
+                document.querySelectorAll(
+                    ".variant-card"
+                );
+
+
+            if (cards.length <= 2) {
+
+                alert(
+                    "At least 2 variants are required."
+                );
+
+                return;
+            }
+
+
+            card.remove();
+
+        }
+    );
+
+
+    /* =========================================================
+       IMAGE PREVIEW
+    ========================================================= */
+
+    function previewImages(
+        input,
+        container
+    ) {
+
+        container.innerHTML = "";
+
+
+        Array.from(
+            input.files
+        ).forEach(
+            function(file) {
+
+                const reader =
+                    new FileReader();
+
+
+                reader.onload =
+                    function(event) {
+
+                        const preview =
+                            document.createElement(
+                                "div"
+                            );
+
+
+                        preview.className =
+                            "preview-image";
+
+
+                        const image =
+                            document.createElement(
+                                "img"
+                            );
+
+
+                        image.src =
+                            event.target.result;
+
+
+                        preview.appendChild(
+                            image
+                        );
+
+
+                        container.appendChild(
+                            preview
+                        );
+
+                    };
+
+
+                reader.readAsDataURL(
+                    file
+                );
+
+            }
+        );
+
+    }
+
+
+    /* =========================================================
+       PRODUCT IMAGE PREVIEW
+    ========================================================= */
+
+    document
+        .getElementById("productImages")
+        .addEventListener(
+            "change",
+            function() {
+
+                previewImages(
+
+                    this,
+
+                    document.getElementById(
+                        "productImagePreview"
+                    )
+
+                );
+
+            }
+        );
+
+
+    /* =========================================================
+       VARIANT IMAGE PREVIEW
+    ========================================================= */
+
+    document.addEventListener(
+        "change",
+        function(event) {
+
+            if (
+                !event.target.classList.contains(
+                    "variant-image-input"
+                )
+            ) {
+                return;
+            }
+
+
+            const card =
+                event.target.closest(
+                    ".variant-card"
+                );
+
+
+            const previewContainer =
+                card.querySelector(
+                    ".variant-image-preview"
+                );
+
+
+            previewImages(
+
+                event.target,
+
+                previewContainer
+
+            );
+
+        }
+    );
+
+
+    /* =========================================================
+       DELETE PRODUCT IMAGE
+       AJAX - STAYS ON SAME PAGE
+    ========================================================= */
+
+    document.addEventListener(
+        "click",
+        function(event) {
+
+            const deleteButton =
+                event.target.closest(
+                    ".delete-product-image"
+                );
+
+
+            if (!deleteButton) {
+                return;
+            }
+
+
+            const imageId =
+                deleteButton.dataset.imageId;
+
+
+            if (!imageId) {
+
+                alert(
+                    "Image ID is missing."
+                );
+
+                return;
+            }
+
+
+            const confirmed =
+                confirm(
+                    "Are you sure you want to delete this product image?"
+                );
+
+
+            if (!confirmed) {
+                return;
+            }
+
+
+            const imageCard =
+                deleteButton.closest(
+                    ".image-card"
+                );
+
+
+            imageCard.classList.add(
+                "deleting"
+            );
+
+
+            deleteButton.disabled =
+                true;
+
+
+            const formData =
+                new FormData();
+
+
+            formData.append(
+                "image_id",
+                imageId
+            );
+
+
+            formData.append(
+                "csrfmiddlewaretoken",
+                csrfToken
+            );
+
+
+            fetch(
+                "{% url 'customadmin:delete_product_image' %}",
+                {
+
+                    method: "POST",
+
+                    headers: {
+
+                        "X-CSRFToken":
+                            csrfToken,
+
+                        "X-Requested-With":
+                            "XMLHttpRequest"
+
+                    },
+
+                    body: formData
+
+                }
+            )
+
+            .then(
+                response => {
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            "Server returned an error."
+                        );
+
+                    }
+
+
+                    return response.json();
+
+                }
+            )
+
+            .then(
+                data => {
+
+                    if (data.success) {
+
+                        imageCard.remove();
+
+                    } else {
+
+                        imageCard.classList.remove(
+                            "deleting"
+                        );
+
+                        deleteButton.disabled =
+                            false;
+
+
+                        alert(
+                            data.message ||
+                            "Unable to delete image."
+                        );
+
+                    }
+
+                }
+            )
+
+            .catch(
+                error => {
+
+                    console.error(
+                        "Product image delete error:",
+                        error
+                    );
+
+
+                    imageCard.classList.remove(
+                        "deleting"
+                    );
+
+
+                    deleteButton.disabled =
+                        false;
+
+
+                    alert(
+                        "Unable to delete image. Please try again."
+                    );
+
+                }
+            );
+
+        }
+    );
+
+
+    /* =========================================================
+       DELETE VARIANT IMAGE
+       AJAX - STAYS ON SAME PAGE
+    ========================================================= */
+
+    document.addEventListener(
+        "click",
+        function(event) {
+
+            const deleteButton =
+                event.target.closest(
+                    ".delete-variant-image"
+                );
+
+
+            if (!deleteButton) {
+                return;
+            }
+
+
+            const imageId =
+                deleteButton.dataset.imageId;
+
+
+            if (!imageId) {
+
+                alert(
+                    "Image ID is missing."
+                );
+
+                return;
+            }
+
+
+            const confirmed =
+                confirm(
+                    "Are you sure you want to delete this variant image?"
+                );
+
+
+            if (!confirmed) {
+                return;
+            }
+
+
+            const imageCard =
+                deleteButton.closest(
+                    ".image-card"
+                );
+
+
+            imageCard.classList.add(
+                "deleting"
+            );
+
+
+            deleteButton.disabled =
+                true;
+
+
+            const formData =
+                new FormData();
+
+
+            formData.append(
+                "image_id",
+                imageId
+            );
+
+
+            formData.append(
+                "csrfmiddlewaretoken",
+                csrfToken
+            );
+
+
+            fetch(
+                "{% url 'customadmin:delete_variant_image' %}",
+                {
+
+                    method: "POST",
+
+                    headers: {
+
+                        "X-CSRFToken":
+                            csrfToken,
+
+                        "X-Requested-With":
+                            "XMLHttpRequest"
+
+                    },
+
+                    body: formData
+
+                }
+            )
+
+            .then(
+                response => {
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            "Server returned an error."
+                        );
+
+                    }
+
+
+                    return response.json();
+
+                }
+            )
+
+            .then(
+                data => {
+
+                    if (data.success) {
+
+                        imageCard.remove();
+
+                    } else {
+
+                        imageCard.classList.remove(
+                            "deleting"
+                        );
+
+                        deleteButton.disabled =
+                            false;
+
+
+                        alert(
+                            data.message ||
+                            "Unable to delete variant image."
+                        );
+
+                    }
+
+                }
+            )
+
+            .catch(
+                error => {
+
+                    console.error(
+                        "Variant image delete error:",
+                        error
+                    );
+
+
+                    imageCard.classList.remove(
+                        "deleting"
+                    );
+
+
+                    deleteButton.disabled =
+                        false;
+
+
+                    alert(
+                        "Unable to delete variant image. Please try again."
+                    );
+
+                }
+            );
+
+        }
+    );
+
+</script>
+
+{% endblock %}
