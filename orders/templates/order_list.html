@@ -1,0 +1,461 @@
+{% extends "user_base.html" %}
+{% load static %}
+
+{% block title %}
+    My Orders
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+.order-list-page {
+    background: #f6f7fb;
+    min-height: 90vh;
+    padding: 45px 0;
+}
+
+.order-list-wrapper {
+    width: 90%;
+    max-width: 1100px;
+    margin: auto;
+}
+
+.order-list-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 25px;
+}
+
+
+/* =========================
+   SEARCH
+========================= */
+
+.order-search {
+    background: #fff;
+    padding: 18px;
+    border-radius: 12px;
+    margin-bottom: 25px;
+    box-shadow: 0 3px 15px rgba(0,0,0,0.05);
+}
+
+.order-search form {
+    display: flex;
+    gap: 10px;
+}
+
+.order-search input {
+    flex: 1;
+    border: 1px solid #ddd;
+    border-radius: 7px;
+    padding: 11px 14px;
+    outline: none;
+}
+
+.order-search input:focus {
+    border-color: #315170;
+}
+
+.search-btn {
+    border: none;
+    background: #315170;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 7px;
+    cursor: pointer;
+}
+
+.search-btn:hover {
+    background: #243e58;
+}
+
+
+/* =========================
+   ORDER CARD
+========================= */
+
+.order-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 22px;
+    margin-bottom: 18px;
+    box-shadow: 0 3px 15px rgba(0,0,0,0.05);
+}
+
+.order-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 18px;
+}
+
+.order-id {
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.order-date {
+    color: #888;
+    font-size: 13px;
+    margin-top: 5px;
+}
+
+
+/* =========================
+   STATUS
+========================= */
+
+.order-status {
+    padding: 7px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+
+/* =========================
+   ORDER INFO
+========================= */
+
+.order-info {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    padding: 15px 0;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+}
+
+.info-label {
+    color: #888;
+    font-size: 12px;
+    margin-bottom: 4px;
+}
+
+.info-value {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+
+/* =========================
+   ACTIONS
+========================= */
+
+.order-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.order-btn {
+    display: inline-block;
+    padding: 9px 16px;
+    border-radius: 7px;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.view-btn {
+    background: #315170;
+    color: #fff;
+}
+
+.view-btn:hover {
+    background: #243e58;
+    color: #fff;
+}
+
+.invoice-btn {
+    border: 1px solid #315170;
+    color: #315170;
+}
+
+.invoice-btn:hover {
+    background: #315170;
+    color: #fff;
+}
+
+
+/* =========================
+   EMPTY
+========================= */
+
+.empty-orders {
+    background: #fff;
+    border-radius: 14px;
+    padding: 60px 20px;
+    text-align: center;
+    box-shadow: 0 3px 15px rgba(0,0,0,0.05);
+}
+
+.empty-orders h4 {
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.empty-orders p {
+    color: #777;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 700px) {
+
+    .order-list-page {
+        padding: 25px 0;
+    }
+
+    .order-list-wrapper {
+        width: 94%;
+    }
+
+    .order-card {
+        padding: 18px;
+    }
+
+    .order-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .order-info {
+        grid-template-columns: 1fr;
+    }
+
+    .order-actions {
+        flex-direction: column;
+    }
+
+    .order-btn {
+        text-align: center;
+    }
+
+    .order-search form {
+        flex-direction: column;
+    }
+
+    .search-btn {
+        width: 100%;
+    }
+
+}
+
+</style>
+
+
+<section class="order-list-page">
+
+    <div class="order-list-wrapper">
+
+
+        <!-- =========================
+             HEADER
+        ========================== -->
+
+        <h1 class="order-list-title">
+            My Orders
+        </h1>
+
+
+        <!-- =========================
+             SEARCH
+        ========================== -->
+
+        <div class="order-search">
+
+            <form method="GET">
+
+                <input
+                    type="search"
+                    name="search"
+                    value="{{ search }}"
+                    placeholder="Search by Order ID"
+                >
+
+                <button
+                    type="submit"
+                    class="search-btn"
+                >
+                    Search
+                </button>
+
+            </form>
+
+        </div>
+
+
+       
+
+        {% for order in orders %}
+
+            <div class="order-card">
+
+
+                <!-- HEADER -->
+
+                <div class="order-card-header">
+
+                    <div>
+
+                        <div class="order-id">
+                            Order ID: #{{ order.id }}
+                        </div>
+
+                        <div class="order-date">
+                            {{ order.created_at|date:"d M Y, h:i A" }}
+                        </div>
+
+                    </div>
+
+
+                    <span
+                        class="order-status
+                        {% if order.status == 'Pending' %}
+                            bg-warning text-dark
+                        {% elif order.status == 'Confirmed' %}
+                            bg-primary text-white
+                        {% elif order.status == 'Shipped' %}
+                            bg-info text-dark
+                        {% elif order.status == 'Delivered' %}
+                            bg-success text-white
+                        {% elif order.status == 'Cancelled' %}
+                            bg-danger text-white
+                        {% endif %}"
+                    >
+
+                        {{ order.get_status_display }}
+
+                    </span>
+
+                </div>
+
+
+                <!-- ORDER INFO -->
+
+                <div class="order-info">
+
+
+                    <!-- DATE -->
+
+                    <div>
+
+                        <div class="info-label">
+                            Order Date
+                        </div>
+
+                        <div class="info-value">
+                            {{ order.created_at|date:"d M Y" }}
+                        </div>
+
+                    </div>
+
+
+                    <!-- PAYMENT -->
+
+                    <div>
+
+                        <div class="info-label">
+                            Payment
+                        </div>
+
+                        <div class="info-value">
+                            {{ order.get_payment_method_display }}
+                        </div>
+
+                    </div>
+
+
+                    <!-- TOTAL -->
+
+                    <div>
+
+                        <div class="info-label">
+                            Total Amount
+                        </div>
+
+                        <div class="info-value">
+                            ₹{{ order.total_amount|floatformat:2 }}
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ACTIONS -->
+
+                <div class="order-actions">
+
+                    <form method="POST" action="{% url 'orders:order_detail' %}">
+                        {% csrf_token %}
+
+                        <input
+                            type="hidden"
+                            name="order_id"
+                            value="{{ order.id }}"
+                        >
+
+                        <button type="submit">
+                            View Details
+                        </button>
+                    </form>
+
+
+                    <form method="POST" action="{% url 'orders:download_invoice' %}">
+                        {% csrf_token %}
+
+                        <input
+                            type="hidden"
+                            name="order_id"
+                            value="{{ order.id }}"
+                        >
+
+                        <button type="submit">
+                            Download Invoice
+                        </button>
+                    </form>
+
+                </div>
+
+            </div>
+
+
+        {% empty %}
+
+
+            <div class="empty-orders">
+
+                <h4>
+                    {% if search %}
+                        No Orders Found
+                    {% else %}
+                        No Orders Yet
+                    {% endif %}
+                </h4>
+
+                <p>
+                    {% if search %}
+                        No order matches "{{ search }}".
+                    {% else %}
+                        You haven't placed any orders yet.
+                    {% endif %}
+                </p>
+
+            </div>
+
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+{% endblock %}
+
