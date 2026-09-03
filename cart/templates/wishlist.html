@@ -1,0 +1,572 @@
+{% extends "user_base.html" %}
+{% load static %}
+
+{% block content %}
+
+<style>
+
+    .wishlist-page {
+        padding-top: 35px;
+        padding-bottom: 50px;
+    }
+
+    .wishlist-header {
+        margin-bottom: 30px;
+    }
+
+    .wishlist-header h2 {
+        color: #032445;
+        font-size: 30px;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+
+    .wishlist-header p {
+        color: #777;
+        margin: 0;
+    }
+
+    .wishlist-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 24px;
+    }
+
+    .wishlist-card {
+        background: #fff;
+        border: 1px solid #e5e5e5;
+        border-radius: 12px;
+        overflow: hidden;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .wishlist-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+    }
+
+    .wishlist-image-wrapper {
+        width: 100%;
+        height: 240px;
+        background: #f7f7f7;
+        overflow: hidden;
+    }
+
+    .wishlist-image-wrapper a {
+        display: block;
+        width: 100%;
+        height: 100%;
+    }
+
+    .wishlist-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.3s ease;
+    }
+
+    .wishlist-card:hover .wishlist-image {
+        transform: scale(1.03);
+    }
+
+    .wishlist-no-image {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #888;
+        background: #f5f5f5;
+    }
+
+    .wishlist-details {
+        padding: 18px;
+        flex: 1;
+    }
+
+    .wishlist-category {
+        font-size: 12px;
+        color: #777;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 7px;
+    }
+
+    .wishlist-name {
+        margin: 0 0 8px;
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    .wishlist-name a {
+        color: #032445;
+        text-decoration: none;
+    }
+
+    .wishlist-name a:hover {
+        color: #315170;
+    }
+
+    .wishlist-description {
+        color: #777;
+        font-size: 13px;
+        line-height: 1.5;
+        margin-bottom: 12px;
+    }
+
+    .wishlist-price {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .wishlist-current-price {
+        color: #032445;
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+    .wishlist-old-price {
+        color: #999;
+        font-size: 13px;
+    }
+
+    .wishlist-footer {
+        padding: 0 18px 18px;
+    }
+
+    .wishlist-stock {
+        display: inline-block;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 5px 9px;
+        border-radius: 20px;
+        margin-bottom: 12px;
+    }
+
+    .wishlist-in-stock {
+        color: #198754;
+        background: #e9f7ef;
+    }
+
+    .wishlist-out-stock {
+        color: #dc3545;
+        background: #fdecef;
+    }
+
+    .wishlist-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .wishlist-actions form {
+        flex: 1;
+        margin: 0;
+    }
+
+    .wishlist-btn {
+        width: 100%;
+        min-height: 38px;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: 0.2s ease;
+    }
+
+    .wishlist-view-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 1;
+        color: #032445;
+        background: #fff;
+        border: 1px solid #032445;
+        text-decoration: none;
+    }
+
+    .wishlist-view-btn:hover {
+        color: #fff;
+        background: #032445;
+    }
+
+    .wishlist-cart-btn {
+        color: #fff;
+        background: #032445;
+        border: 1px solid #032445;
+    }
+
+    .wishlist-cart-btn:hover {
+        background: #315170;
+        border-color: #315170;
+    }
+
+    .wishlist-cart-btn:disabled {
+        background: #aaa;
+        border-color: #aaa;
+        cursor: not-allowed;
+    }
+
+    .wishlist-remove-form {
+        margin-top: 8px !important;
+    }
+
+    .wishlist-remove-btn {
+        color: #dc3545;
+        background: #fff;
+        border: 1px solid #dc3545;
+    }
+
+    .wishlist-remove-btn:hover {
+        color: #fff;
+        background: #dc3545;
+    }
+
+    .wishlist-empty {
+        text-align: center;
+        padding: 70px 20px;
+    }
+
+    .wishlist-empty h4 {
+        color: #032445;
+        margin-bottom: 8px;
+    }
+
+    .wishlist-empty p {
+        color: #777;
+        margin-bottom: 20px;
+    }
+
+    .wishlist-shopping-btn {
+        display: inline-block;
+        color: #fff;
+        background: #032445;
+        padding: 10px 20px;
+        border-radius: 6px;
+        text-decoration: none;
+    }
+
+    .wishlist-shopping-btn:hover {
+        color: #fff;
+        background: #315170;
+    }
+
+    @media (max-width: 1199px) {
+        .wishlist-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 991px) {
+        .wishlist-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 575px) {
+        .wishlist-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .wishlist-image-wrapper {
+            height: 260px;
+        }
+
+        .wishlist-actions {
+            flex-direction: column;
+        }
+    }
+
+</style>
+
+<div class="container wishlist-page">
+
+<div class="wishlist-header">
+
+    <h2>
+        My Wishlist
+    </h2>
+
+    <p>
+        Products you have saved for later
+    </p>
+
+</div>
+
+
+<!-- =========================
+     WISHLIST PRODUCTS
+========================= -->
+
+<div class="wishlist-grid">
+
+    {% for item in wishlist_items %}
+
+        <div>
+
+            <!-- =========================
+                 PRODUCT CARD
+            ========================= -->
+
+            <div class="wishlist-card">
+
+                <!-- Product Image -->
+
+                <div class="wishlist-image-wrapper">
+
+                    <a
+                        href="{% url 'products:products_details' item.product.name %}"
+                        class="text-decoration-none"
+                    >
+
+                        {% if item.product.main_image %}
+
+                            <img
+                                src="{{ item.product.main_image.image.url }}"
+                                alt="{{ item.product.name }}"
+                                class="wishlist-image"
+                            >
+
+                        {% else %}
+
+                            <div class="wishlist-no-image">
+
+                                <span class="text-muted small">
+                                    No Image
+                                </span>
+
+                            </div>
+
+                        {% endif %}
+
+                    </a>
+
+                </div>
+
+
+                <!-- =========================
+                     PRODUCT DETAILS
+                ========================= -->
+
+                <div class="wishlist-details">
+
+                    <!-- Category -->
+
+                    {% if item.product.category %}
+
+                        <div class="wishlist-category">
+                            {{ item.product.category.name }}
+                        </div>
+
+                    {% endif %}
+
+
+                    <!-- Product Name -->
+
+                    <h5 class="wishlist-name">
+
+                        <a
+                            href="{% url 'products:products_details' item.product.name %}"
+                        >
+                            {{ item.product.name }}
+                        </a>
+
+                    </h5>
+
+
+                    <!-- Description -->
+
+                    {% if item.product.description %}
+
+                        <p class="wishlist-description">
+                            {{ item.product.description|truncatechars:80 }}
+                        </p>
+
+                    {% endif %}
+
+
+                    <!-- Price -->
+
+                    <div class="wishlist-price">
+
+                        {% if item.product.discount_price %}
+
+                            <span class="wishlist-current-price">
+                                ₹{{ item.product.discount_price }}
+                            </span>
+
+                            {% if item.product.sale_price %}
+
+                                <del class="wishlist-old-price">
+                                    ₹{{ item.product.sale_price }}
+                                </del>
+
+                            {% endif %}
+
+                        {% else %}
+
+                            <span class="wishlist-current-price">
+                                ₹{{ item.product.sale_price }}
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================
+                     PRODUCT CARD FOOTER
+                ========================= -->
+
+                <div class="wishlist-footer">
+
+                    <!-- Stock Status -->
+
+                    <div>
+
+                        {% if item.product.quantity > 0 %}
+
+                            <span class="wishlist-stock wishlist-in-stock">
+                                In Stock
+                            </span>
+
+                        {% else %}
+
+                            <span class="wishlist-stock wishlist-out-stock">
+                                Out of Stock
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- View + Add To Cart -->
+
+                    <div class="wishlist-actions">
+
+                        <!-- View Product -->
+
+                        <a
+                            href="{% url 'products:products_details' item.product.name %}"
+                            class="wishlist-btn wishlist-view-btn"
+                        >
+                            View
+                        </a>
+
+
+                        <!-- Add To Cart -->
+
+                        {% if item.product.quantity > 0 %}
+
+                            <form
+                                method="POST"
+                                action="{% url 'cart:add_to_cart' %}"
+                                
+                            >
+
+                                {% csrf_token %}
+
+                                <input
+                                    type="hidden"
+                                    name="product_id"
+                                    value="{{ item.product.id }}"
+                                >
+
+                                <button
+                                    type="submit"
+                                    class="wishlist-btn wishlist-cart-btn"
+                                >
+                                    Add to Cart
+                                </button>
+
+                            </form>
+
+                        {% else %}
+
+                            <button
+                                type="button"
+                                class="wishlist-btn wishlist-cart-btn"
+                                disabled
+                            >
+                                Out of Stock
+                            </button>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- Remove From Wishlist -->
+
+                    <form
+                        method="POST"
+                        action="{% url 'cart:remove_from_wishlist' %}"
+                        class="wishlist-remove-form"
+                    >
+
+                        {% csrf_token %}
+
+                        <input
+                            type="hidden"
+                            name="product_id"
+                            value="{{ item.product.id }}"
+                        >
+
+                        <button
+                            type="submit"
+                            class="wishlist-btn wishlist-remove-btn"
+                        >
+                            Remove from Wishlist
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    {% empty %}
+
+        <!-- =========================
+             EMPTY WISHLIST
+        ========================= -->
+
+        <div>
+
+            <div class="wishlist-empty">
+
+                <h4>
+                    Your Wishlist is Empty
+                </h4>
+
+                <p>
+                    You haven't added any products to your wishlist yet.
+                </p>
+
+                <a
+                    href="{% url 'products:products' %}"
+                    class="wishlist-shopping-btn"
+                >
+                    Continue Shopping
+                </a>
+
+            </div>
+
+        </div>
+
+    {% endfor %}
+
+</div>
+
+</div>
+
+{% endblock %}
