@@ -1039,12 +1039,15 @@ def address_management(request):
 @never_cache
 @login_required
 def add_address(request):
+
     has_default_address = Address.objects.filter(
         user=request.user,
         is_default=True
     ).exists()
 
-    if request.method == 'POST':
+    return_to = request.GET.get("return_to") or request.POST.get("return_to")
+
+    if request.method == "POST":
 
         form = AddressForm(request.POST)
 
@@ -1052,6 +1055,7 @@ def add_address(request):
 
             address = form.save(commit=False)
             address.user = request.user
+
             if has_default_address:
                 address.is_default = False
 
@@ -1068,25 +1072,27 @@ def add_address(request):
 
             messages.success(
                 request,
-                'Address added successfully.'
+                "Address added successfully."
             )
 
-            return redirect(
-                'users:address'
-            )
+            if return_to == "checkout":
+                return redirect("orders:checkout")
+
+            return redirect("users:address")
 
     else:
 
         form = AddressForm()
 
     context = {
-        'form': form,
-        'has_default_address': has_default_address,
+        "form": form,
+        "has_default_address": has_default_address,
+        "return_to": return_to,
     }
 
     return render(
         request,
-        'add_address.html',
+        "add_address.html",
         context
     )
 
