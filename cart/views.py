@@ -6,6 +6,8 @@ from django.shortcuts import redirect, render
 from products.models import Product
 from .models import Cart,Wishlist
 
+MAX_CART_QUANTITY = 5
+
 @login_required
 def cart_view(request):
     
@@ -220,6 +222,13 @@ def add_to_cart(request):
 
     if cart_item:
 
+        if cart_item.quantity >= MAX_CART_QUANTITY:
+            messages.warning(
+                request,
+                f"You can add a maximum of {MAX_CART_QUANTITY} items of this product."
+            )
+            return redirect("cart:cart")
+
         if cart_item.quantity >= product.quantity:
 
             messages.warning(
@@ -356,6 +365,13 @@ def increment_cart(request):
             "This product is out of stock."
         )
 
+        return redirect("cart:cart")
+
+    if cart_item.quantity >= MAX_CART_QUANTITY:
+        messages.warning(
+            request,
+             f"You can add a maximum of {MAX_CART_QUANTITY} items of this product."
+             )
         return redirect("cart:cart")
 
     if cart_item.quantity >= product.quantity:
