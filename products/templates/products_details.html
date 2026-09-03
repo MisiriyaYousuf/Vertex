@@ -1,0 +1,2114 @@
+{% extends "user_base.html" %}
+
+{% block title %}
+    {% if product %}
+        {{ product.name }}
+    {% else %}
+        Product Not Found
+    {% endif %}
+{% endblock %}
+
+
+{% block content %}
+
+<style>
+
+/* =========================================================
+   PRODUCT DETAIL PAGE
+========================================================= */
+
+.product-detail-page {
+    padding-top: 25px;
+    padding-bottom: 60px;
+}
+
+.product-main-card {
+    border: 0;
+    border-radius: 14px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+    overflow: hidden;
+    background: #fff;
+}
+
+.product-main-card-body {
+    padding: 22px;
+}
+
+
+/* =========================================================
+   BREADCRUMB
+========================================================= */
+
+.product-breadcrumb {
+    font-size: 13px;
+    margin-bottom: 22px;
+}
+
+.product-breadcrumb a {
+    color: #212529;
+    text-decoration: none;
+}
+
+.product-breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+
+/* =========================================================
+   PRODUCT IMAGE AREA
+========================================================= */
+
+.product-gallery {
+    position: relative;
+}
+
+.product-image-box {
+    height: 460px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid #eeeeee;
+}
+
+.product-main-image {
+    padding-top: 5px;
+    width: 75%;
+    height: 75%;
+    object-fit:contain;
+    transition: transform 0.25s ease;
+    transform-origin: center center;
+    user-select: none;
+}
+
+
+/* =========================================================
+   ZOOM CONTROLS
+========================================================= */
+
+.zoom-controls {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    z-index: 5;
+}
+
+.zoom-btn {
+    width: 38px;
+    height: 38px;
+    border: 1px solid #ddd;
+    background: rgba(255,255,255,0.95);
+    border-radius: 6px;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.zoom-btn:hover {
+    background: #212529;
+    color: white;
+}
+
+
+/* =========================================================
+   IMAGE HINT
+========================================================= */
+
+.zoom-hint {
+    position: absolute;
+    left: 12px;
+    bottom: 12px;
+    background: rgba(0,0,0,0.65);
+    color: white;
+    font-size: 11px;
+    padding: 5px 9px;
+    border-radius: 5px;
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   THUMBNAILS
+========================================================= */
+
+.thumbnail-container {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+}
+
+.product-thumb {
+    width: 65px;
+    height: 65px;
+    object-fit: cover;
+    border: 2px solid transparent;
+    border-radius: 7px;
+    padding: 2px;
+    cursor: pointer;
+    background: white;
+    transition: 0.2s ease;
+}
+
+.product-thumb:hover,
+.product-thumb.active {
+    border-color: #212529;
+}
+
+
+/* =========================================================
+   PRODUCT DETAILS
+========================================================= */
+
+.product-details {
+    padding-left: 15px;
+}
+
+.product-title {
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1.25;
+    margin-bottom: 10px;
+}
+
+
+/* =========================================================
+   RATING
+========================================================= */
+
+.rating-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.rating-stars {
+    color: #f5a623;
+    letter-spacing: 1px;
+    font-size: 17px;
+}
+
+.rating-count {
+    color: #777;
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   PRICE
+========================================================= */
+
+.product-price {
+    font-size: 29px;
+    font-weight: 700;
+}
+
+.old-price {
+    color: #888;
+    font-size: 16px;
+    margin-left: 8px;
+}
+
+.discount-label {
+    color: #198754;
+    font-size: 13px;
+    font-weight: 700;
+    margin-left: 8px;
+}
+
+
+/* =========================================================
+   COUPON / OFFER
+========================================================= */
+
+.offer-box {
+    border: 1px dashed #198754;
+    background: #f2fff5;
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin: 18px 0;
+}
+
+.offer-title {
+    color: #198754;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.offer-text {
+    color: #555;
+    font-size: 13px;
+    margin-top: 3px;
+}
+
+
+/* =========================================================
+   DESCRIPTION
+========================================================= */
+
+.description-text {
+    color: #666;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   HIGHLIGHTS
+========================================================= */
+
+.highlight-box {
+    border: 1px solid #e6e6e6;
+    border-radius: 7px;
+    padding: 10px 12px;
+    height: 100%;
+    background: #fff;
+}
+
+.highlight-label {
+    display: block;
+    color: #777;
+    font-size: 11px;
+    margin-bottom: 3px;
+}
+
+.highlight-value {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   STOCK
+========================================================= */
+
+.stock-success {
+    color: #198754;
+    font-weight: 600;
+}
+
+.stock-warning {
+    color: #d97706;
+    font-weight: 600;
+}
+
+.stock-danger {
+    color: #dc3545;
+    font-weight: 600;
+}
+
+.stock-box {
+    margin-top: 18px;
+}
+
+
+/* =========================================================
+   SOLD OUT / UNAVAILABLE
+========================================================= */
+
+.sold-out-box,
+.unavailable-box {
+    border-radius: 8px;
+    padding: 14px;
+    margin-top: 18px;
+}
+
+.sold-out-box {
+    border: 1px solid #dc3545;
+    background: #fff5f5;
+}
+
+.unavailable-box {
+    border: 1px solid #6c757d;
+    background: #f5f5f5;
+}
+
+
+/* =========================================================
+   QUANTITY
+========================================================= */
+
+.quantity-wrapper {
+    margin-top: 18px;
+}
+
+.quantity-control {
+    display: flex;
+    width: 130px;
+}
+
+.quantity-control button {
+    width: 38px;
+    border: 1px solid #ced4da;
+    background: #f8f9fa;
+}
+
+.quantity-control input {
+    width: 54px;
+    text-align: center;
+    border: 1px solid #ced4da;
+    border-left: 0;
+    border-right: 0;
+}
+
+
+/* =========================================================
+   ACTION BUTTONS
+========================================================= */
+
+.action-buttons {
+    display: flex;
+    gap: 8px;
+    margin-top: 18px;
+}
+
+.add-cart-btn {
+    padding: 10px 25px;
+}
+
+.wishlist-detail-btn {
+    width: 46px;
+    font-size: 21px;
+}
+
+
+/* =========================================================
+   VARIANTS
+========================================================= */
+
+.variant-section {
+    margin-top: 20px;
+}
+
+.variant-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.variant-button {
+    border: 1px solid #d5d5d5;
+    border-radius: 7px;
+    padding: 8px 14px;
+    cursor: pointer;
+    transition: 0.2s ease;
+    background: #fff;
+    font-size: 13px;
+}
+
+.variant-button:hover,
+.variant-button.active {
+    border-color: #212529;
+    background: #212529;
+    color: #fff;
+}
+
+.variant-details-panel {
+    margin-top: 14px;
+    border: 1px solid #e5e5e5;
+    border-radius: 9px;
+    padding: 14px;
+    background: #fafafa;
+}
+
+.variant-details-panel[hidden] {
+    display: none !important;
+}
+
+.variant-detail-images {
+    display: flex;
+    gap: 7px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.variant-detail-thumb {
+    width: 58px;
+    height: 58px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    cursor: pointer;
+}
+
+.variant-detail-main-image {
+    width: 100%;
+    height: 170px;
+    object-fit: contain;
+    background: #fff;
+    border-radius: 7px;
+    border: 1px solid #eee;
+}
+
+.variant-info-item {
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+.variant-info-item strong {
+    min-width: 65px;
+    display: inline-block;
+    cursor: pointer;
+    transition: 0.2s ease;
+    background: white;
+}
+
+
+/* =========================================================
+   REVIEWS
+========================================================= */
+
+.reviews-section {
+    margin-top: 50px;
+    padding-top: 35px;
+    border-top: 1px solid #eeeeee;
+}
+
+.review-summary {
+    background: #f8f9fa;
+    border-radius: 9px;
+    padding: 25px;
+    text-align: center;
+    height: 100%;
+}
+
+.review-score {
+    font-size: 42px;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   REVIEW ITEM
+========================================================= */
+
+.review-item {
+    border-bottom: 1px solid #eeeeee;
+    padding: 15px 0;
+}
+
+.review-user {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.review-text {
+    color: #666;
+    font-size: 14px;
+    margin-top: 6px;
+}
+
+
+/* =========================================================
+   RELATED PRODUCTS
+========================================================= */
+
+.related-section {
+    margin-top: 55px;
+    padding-top: 35px;
+    border-top: 1px solid #eeeeee;
+}
+
+.related-card {
+    height: 100%;
+    border: 0;
+    border-radius: 9px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+    transition: 0.2s ease;
+}
+
+.related-card:hover {
+    transform: translateY(-4px);
+}
+
+.related-image {
+    width: 100%;
+    height: 145px;
+    object-fit: cover;
+    background: #f8f9fa;
+}
+
+.related-card .card-body {
+    padding: 10px;
+}
+
+.related-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 5px 0;
+    line-height: 1.3;
+}
+
+.related-price {
+    font-size: 15px;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 991px) {
+
+    .product-details {
+        padding-left: 0;
+        margin-top: 25px;
+    }
+
+    .product-image-box {
+        height: 400px;
+    }
+}
+
+
+@media (max-width: 575px) {
+
+    .product-image-box {
+        height: 320px;
+    }
+
+    .product-title {
+        font-size: 24px;
+    }
+
+    .product-price {
+        font-size: 25px;
+    }
+
+    .action-buttons {
+        flex-wrap: wrap;
+    }
+
+}
+
+</style>
+
+
+<div class="container product-detail-page">
+
+{% if product %}
+
+<!-- =====================================================
+     BREADCRUMB
+===================================================== -->
+
+<nav aria-label="breadcrumb">
+
+    <ol class="breadcrumb product-breadcrumb">
+
+        <li class="breadcrumb-item">
+            <a href="{% url 'users:home' %}">
+                Home
+            </a>
+        </li>
+
+        <li class="breadcrumb-item">
+            <a href="{% url 'products:products' %}">
+                Products
+            </a>
+        </li>
+        
+        <li class="breadcrumb-item active">
+            {{ product.name }}
+        </li>
+
+    </ol>
+
+</nav>
+
+
+<!-- =====================================================
+     MAIN PRODUCT SECTION
+===================================================== -->
+
+<div class="card product-main-card">
+
+<div class="product-main-card-body">
+
+<div class="row g-4">
+
+
+<!-- =====================================================
+     LEFT - PRODUCT GALLERY
+===================================================== -->
+
+<div class="col-lg-5">
+
+    <div class="product-gallery">
+
+        <div
+            class="product-image-box"
+            id="productImageBox"
+        >
+
+            {% if product.main_image %}
+
+                <img
+                    id="mainProductImage"
+                    src="{{ product.main_image.image.url }}"
+                    alt="{{ product.name }}"
+                    class="product-main-image"
+                >
+
+                <!-- ZOOM CONTROLS -->
+
+                <div class="zoom-controls">
+
+                    <button
+                        type="button"
+                        class="zoom-btn"
+                        onclick="zoomIn()"
+                        title="Zoom In"
+                    >
+                        +
+                    </button>
+
+                    <button
+                        type="button"
+                        class="zoom-btn"
+                        onclick="zoomOut()"
+                        title="Zoom Out"
+                    >
+                        −
+                    </button>
+
+                    <button
+                        type="button"
+                        class="zoom-btn"
+                        onclick="resetZoom()"
+                        title="Reset Zoom"
+                    >
+                        ↺
+                    </button>
+
+                </div>
+
+                <div class="zoom-hint">
+                    Move mouse over image to zoom
+                </div>
+
+            {% else %}
+
+                <div class="h-100 d-flex align-items-center justify-content-center">
+
+                    <span class="text-muted">
+                        No Image Available
+                    </span>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- =================================================
+             THUMBNAILS
+        ================================================= -->
+
+        <div class="thumbnail-container">
+
+            {% if product.main_image %}
+
+                <img
+                    src="{{ product.main_image.image.url }}"
+                    alt="{{ product.name }}"
+                    class="product-thumb active"
+                    onclick="changeProductImage(this)"
+                >
+
+            {% endif %}
+
+
+            {% for image in product.images.all %}
+
+                {% if not product.main_image or image.id != product.main_image.id %}
+
+                    <img
+                        src="{{ image.image.url }}"
+                        alt="{{ product.name }}"
+                        class="product-thumb"
+                        onclick="changeProductImage(this)"
+                    >
+
+                {% endif %}
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     RIGHT - PRODUCT INFORMATION
+===================================================== -->
+
+<div class="col-lg-7">
+
+<div class="product-details">
+
+
+<!-- PRODUCT NAME -->
+
+<h1 class="product-title">
+    {{ product.name }}
+</h1>
+
+
+<!-- =====================================================
+     RATINGS
+===================================================== -->
+
+<div class="rating-container">
+
+    {% if average_rating %}
+
+        <span class="rating-stars">
+            {% if average_rating >= 1 %}★{% else %}☆{% endif %}
+            {% if average_rating >= 2 %}★{% else %}☆{% endif %}
+            {% if average_rating >= 3 %}★{% else %}☆{% endif %}
+            {% if average_rating >= 4 %}★{% else %}☆{% endif %}
+            {% if average_rating >= 5 %}★{% else %}☆{% endif %}
+        </span>
+
+        <strong>
+            {{ average_rating }}
+        </strong>
+
+        <span class="rating-count">
+            ({{ review_count|default:0 }} Reviews)
+        </span>
+
+    {% else %}
+
+        <span class="rating-stars">
+            ☆☆☆☆☆
+        </span>
+
+        <span class="rating-count">
+            No ratings yet
+        </span>
+
+    {% endif %}
+
+</div>
+
+
+<hr>
+
+
+<!-- =====================================================
+     PRICE
+===================================================== -->
+
+<div class="mt-3">
+
+    {% if product.discount_price %}
+
+        <span class="product-price">
+            ₹{{ product.discount_price }}
+        </span>
+
+        <del class="old-price">
+            ₹{{ product.sale_price }}
+        </del>
+
+        {% if product.sale_price > product.discount_price %}
+
+            <span class="discount-label">
+
+                {% widthratio product.discount_price product.sale_price 100 as discount_percentage %}
+
+                Special Price
+
+            </span>
+
+        {% endif %}
+
+    {% else %}
+
+        <span class="product-price">
+            ₹{{ product.sale_price }}
+        </span>
+
+    {% endif %}
+
+</div>
+
+
+<!-- =====================================================
+     OFFER / COUPON
+===================================================== -->
+
+{% if product.discount_price and product.sale_price %}
+
+<div class="offer-box">
+
+    <div class="offer-title">
+        🎉 Special Offer
+    </div>
+
+    <div class="offer-text">
+        Save more on this product with the current discounted price.
+    </div>
+
+</div>
+
+{% endif %}
+
+
+<!-- =====================================================
+     DESCRIPTION
+===================================================== -->
+
+{% if product.description %}
+
+<div class="mt-4">
+
+    <h6 class="fw-bold">
+        Description
+    </h6>
+
+    <p class="description-text">
+        {{ product.description }}
+    </p>
+
+</div>
+
+{% endif %}
+
+
+<!-- =====================================================
+     HIGHLIGHTS / SPECIFICATIONS
+===================================================== -->
+
+<div class="mt-4">
+
+    <h6 class="fw-bold mb-3">
+        Highlights & Specifications
+    </h6>
+
+
+    <div class="row g-2">
+
+        {% if product.color %}
+
+        <div class="col-6 col-md-4">
+
+            <div class="highlight-box">
+
+                <span class="highlight-label">
+                    Color
+                </span>
+
+                <span class="highlight-value">
+                    {{ product.color }}
+                </span>
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+
+        {% if product.size %}
+
+        <div class="col-6 col-md-4">
+
+            <div class="highlight-box">
+
+                <span class="highlight-label">
+                    Size
+                </span>
+
+                <span class="highlight-value">
+                    {{ product.size }}
+                </span>
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+
+        {% if product.category %}
+
+        <div class="col-6 col-md-4">
+
+            <div class="highlight-box">
+
+                <span class="highlight-label">
+                    Category
+                </span>
+
+                <span class="highlight-value">
+                    {{ product.category.name }}
+                </span>
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+
+        <div class="col-6 col-md-4">
+
+            <div class="highlight-box">
+
+                <span class="highlight-label">
+                    Product Status
+                </span>
+
+                <span class="highlight-value">
+
+                    {% if product.is_active %}
+
+                        <span class="text-success">
+                            Available
+                        </span>
+
+                    {% else %}
+
+                        <span class="text-danger">
+                            Unavailable
+                        </span>
+
+                    {% endif %}
+
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     VARIANTS
+===================================================== -->
+
+{% if variants %}
+
+<div class="variant-section">
+
+    <h6 class="fw-bold mb-2">
+        Available Variants
+    </h6>
+
+    <div class="variant-buttons">
+
+        {% for variant in variants %}
+
+            <button
+                type="button"
+                class="variant-button {% if forloop.first %}active{% endif %}"
+                onclick="showVariant('{{ variant.id }}', this)"
+            >
+                Variant {{ forloop.counter }}
+                {% if variant.color %}
+                    - {{ variant.color }}
+                {% elif variant.size %}
+                    - {{ variant.size }}
+                {% endif %}
+            </button>
+
+        {% endfor %}
+
+    </div>
+
+    {% for variant in variants %}
+
+    <div
+        id="variant-panel-{{ variant.id }}"
+        class="variant-details-panel"
+        {% if not forloop.first %}hidden{% endif %}
+    >
+
+        <div class="row g-3 align-items-center">
+
+            <div class="col-md-5">
+
+                {% with first_variant_image=variant.images.all|first %}
+
+                    {% if first_variant_image %}
+
+                        <img
+                            id="variant-main-image-{{ variant.id }}"
+                            src="{{ first_variant_image.image.url }}"
+                            alt="{{ product.name }} variant"
+                            class="variant-detail-main-image"
+                        >
+
+                    {% else %}
+
+                        <div class="variant-detail-main-image d-flex align-items-center justify-content-center">
+                            <span class="text-muted small">
+                                No Variant Image
+                            </span>
+                        </div>
+
+                    {% endif %}
+
+                {% endwith %}
+
+                {% if variant.images.all %}
+
+                    <div class="variant-detail-images">
+
+                        {% for variant_image in variant.images.all %}
+
+                            <img
+                                src="{{ variant_image.image.url }}"
+                                alt="{{ product.name }} variant image"
+                                class="variant-detail-thumb"
+                                onclick="changeVariantImage('{{ variant.id }}', this)"
+                            >
+
+                        {% endfor %}
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+
+            <div class="col-md-7">
+
+                <h6 class="fw-bold mb-3">
+                    Variant {{ forloop.counter }} Details
+                </h6>
+
+                {% if variant.color %}
+                    <div class="variant-info-item">
+                        <strong>Color:</strong>
+                        {{ variant.color }}
+                    </div>
+                {% endif %}
+
+                {% if variant.size %}
+                    <div class="variant-info-item">
+                        <strong>Size:</strong>
+                        {{ variant.size }}
+                    </div>
+                {% endif %}
+
+                {% if variant.sku %}
+                    <div class="variant-info-item">
+                        <strong>SKU:</strong>
+                        {{ variant.sku }}
+                    </div>
+                {% endif %}
+
+                <div class="variant-info-item">
+                    <strong>Stock:</strong>
+
+                    {% if variant.quantity > 0 %}
+                        <span class="text-success fw-semibold">
+                            {{ variant.quantity }} available
+                        </span>
+                    {% else %}
+                        <span class="text-danger fw-semibold">
+                            Out of Stock
+                        </span>
+                    {% endif %}
+                </div>
+
+                <div class="variant-info-item">
+                    <strong>Status:</strong>
+
+                    {% if variant.is_active %}
+                        <span class="text-success">
+                            Available
+                        </span>
+                    {% else %}
+                        <span class="text-danger">
+                            Unavailable
+                        </span>
+                    {% endif %}
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+{% endif %}
+
+
+<!-- =====================================================
+     STOCK / AVAILABILITY
+===================================================== -->
+
+<div class="stock-box">
+
+
+{% if not product.is_active %}
+
+    <!-- UNAVAILABLE -->
+
+    <div class="unavailable-box">
+
+        <strong class="text-secondary">
+            Product Unavailable
+        </strong>
+
+        <p class="small text-muted mb-0 mt-1">
+
+            This product is currently unavailable.
+
+            Please check back later.
+
+        </p>
+
+    </div>
+
+
+{% elif product.quantity <= 0 %}
+
+    <!-- SOLD OUT -->
+
+    <div class="sold-out-box">
+
+        <strong class="text-danger">
+            Sold Out
+        </strong>
+
+        <p class="small text-muted mb-0 mt-1">
+
+            Sorry, this product is currently out of stock.
+
+        </p>
+
+    </div>
+
+
+    <button
+        type="button"
+        class="btn btn-secondary mt-3"
+        disabled
+    >
+        Out of Stock
+    </button>
+
+
+{% elif product.quantity <= 5 %}
+
+    <!-- LOW STOCK -->
+
+    <div>
+
+        <strong>
+            Availability:
+        </strong>
+
+        <span class="stock-warning ms-1">
+            Only {{ product.quantity }} left!
+        </span>
+
+    </div>
+
+
+    <!-- QUANTITY -->
+
+    <div class="quantity-wrapper">
+
+        <label class="form-label fw-bold small">
+            Quantity
+        </label>
+
+        <div class="quantity-control">
+
+            <button
+                type="button"
+                onclick="decreaseQuantity()"
+            >
+                −
+            </button>
+
+            <input
+                type="number"
+                id="quantity"
+                value="1"
+                min="1"
+                max="{{ product.quantity }}"
+            >
+
+            <button
+                type="button"
+                onclick="increaseQuantity()"
+            >
+                +
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- ACTION BUTTONS -->
+
+    <div class="action-buttons">
+
+        <form method="POST" action="{% url 'cart:add_to_cart' %}">
+            {% csrf_token %}
+
+            <input
+                type="hidden"
+                name="product_id"
+                value="{{ product.id }}"
+            >
+
+            <input
+                type="hidden"
+                name="quantity"
+                id="cart-quantity"
+                value="1"
+            >
+
+            <button
+                type="submit"
+                class="btn btn-dark add-cart-btn"
+            >
+                Add to Cart
+            </button>
+        </form>
+
+
+        <form
+            method="POST"
+            action="{% url 'cart:add_to_wishlist' %}"
+        >
+            {% csrf_token %}
+
+            <input
+                type="hidden"
+                name="product_id"
+                value="{{ product.id }}"
+            >
+
+            <button
+                type="submit"
+                class="wishlist-btn"
+                title="Add to Wishlist"
+                aria-label="Add {{ product.name }} to wishlist"
+            >
+                ♡
+            </button>
+        </form>
+
+    </div>
+
+
+{% else %}
+
+    <!-- IN STOCK -->
+
+    <div>
+
+        <strong class="small">
+            Availability:
+        </strong>
+
+        <span class="stock-success ms-1 small">
+            In Stock
+        </span>
+
+        <span class="text-muted small ms-1">
+            ({{ product.quantity }} available)
+        </span>
+
+    </div>
+
+
+    <!-- QUANTITY -->
+
+    <div class="quantity-wrapper">
+
+        <label class="form-label fw-bold small">
+            Quantity
+        </label>
+
+        <div class="quantity-control">
+
+            <button
+                type="button"
+                onclick="decreaseQuantity()"
+            >
+                −
+            </button>
+
+            <input
+                type="number"
+                id="quantity"
+                value="1"
+                min="1"
+                max="{{ product.quantity }}"
+            >
+
+            <button
+                type="button"
+                onclick="increaseQuantity()"
+            >
+                +
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- ACTION BUTTONS -->
+
+    <div class="action-buttons">
+
+        {% if product.quantity > 0 %}
+
+                        <form method="POST" action="{% url 'cart:add_to_cart' %}">
+                            {% csrf_token %}
+
+                            <input type="hidden" name="product_id" value="{{ product.id }}">
+
+                            <button type="submit">
+                                Add to Cart
+                            </button>
+                        </form>
+
+                    {% else %}
+
+                        <button
+                            type="button"
+                            class="btn btn-secondary btn-sm flex-fill"
+                            disabled
+                        >
+                            Out of Stock
+                        </button>
+
+                    {% endif %}
+        <button
+            type="button"
+            class="btn btn-outline-dark wishlist-detail-btn"
+            title="Add to Wishlist"
+            aria-label="Add to Wishlist"
+        >
+            ♡
+        </button>
+
+    </div>
+
+{% endif %}
+
+</div>
+
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     RATINGS & REVIEWS
+===================================================== -->
+
+<section class="reviews-section">
+
+    <h4 class="fw-bold mb-4">
+        Ratings & Reviews
+    </h4>
+
+
+    <div class="row g-4">
+
+
+        <!-- REVIEW SUMMARY -->
+
+        <div class="col-md-4">
+
+            <div class="review-summary">
+
+                {% if average_rating %}
+
+                    <div class="review-score">
+                        {{ average_rating }}
+                    </div>
+
+                    <div class="rating-stars">
+                        ★★★★★
+                    </div>
+
+                    <p class="text-muted small mt-2 mb-0">
+
+                        Based on
+                        {{ review_count|default:0 }}
+                        reviews
+
+                    </p>
+
+                {% else %}
+
+                    <div class="review-score">
+                        —
+                    </div>
+
+                    <div class="rating-stars">
+                        ☆☆☆☆☆
+                    </div>
+
+                    <p class="text-muted small mt-2 mb-0">
+                        No reviews yet
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        <!-- CUSTOMER REVIEWS -->
+
+        <div class="col-md-8">
+
+            <div class="card border-0 shadow-sm p-3">
+
+                <h6 class="fw-bold">
+                    Customer Reviews
+                </h6>
+
+                <hr>
+
+
+                {% if reviews %}
+
+                    {% for review in reviews %}
+
+                    <div class="review-item">
+
+                        <div class="review-user">
+
+                            {{ review.user.username }}
+
+                        </div>
+
+
+                        <div class="rating-stars">
+
+                            {% for i in "12345" %}
+
+                                {% if forloop.counter <= review.rating %}
+                                    ★
+                                {% else %}
+                                    ☆
+                                {% endif %}
+
+                            {% endfor %}
+
+                        </div>
+
+
+                        <div class="review-text">
+
+                            {{ review.comment }}
+
+                        </div>
+
+                    </div>
+
+                    {% endfor %}
+
+
+                {% else %}
+
+                    <p class="text-muted small mb-0">
+
+                        No reviews available for this product yet.
+
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     RELATED PRODUCTS
+===================================================== -->
+
+<section class="related-section">
+
+    <h4 class="fw-bold mb-4">
+        Related Products
+    </h4>
+
+
+    <div class="row g-3">
+
+        {% for related_product in related_products %}
+
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+
+            <div class="card related-card">
+
+
+                <!-- IMAGE -->
+
+                <a
+                    href="{% url 'products:products_details' related_product.name %}"
+                    class="text-decoration-none"
+                >
+
+                    {% if related_product.main_image %}
+
+                        <img
+                            src="{{ related_product.main_image.image.url }}"
+                            alt="{{ related_product.name }}"
+                            class="related-image"
+                        >
+
+                    {% else %}
+
+                        <div class="related-image d-flex align-items-center justify-content-center">
+
+                            <span class="text-muted small">
+                                No Image
+                            </span>
+
+                        </div>
+
+                    {% endif %}
+
+                </a>
+
+
+                <!-- BODY -->
+
+                <div class="card-body">
+
+
+                    {% if related_product.category %}
+
+                        <small class="text-muted">
+                            {{ related_product.category.name }}
+                        </small>
+
+                    {% endif %}
+
+
+                    <div class="related-title">
+
+                        {{ related_product.name }}
+
+                    </div>
+
+
+                    <!-- PRICE -->
+
+                    <div class="mb-2">
+
+                        {% if related_product.discount_price %}
+
+                            <span class="related-price">
+                                ₹{{ related_product.discount_price }}
+                            </span>
+
+                            <del class="text-muted small ms-1">
+                                ₹{{ related_product.sale_price }}
+                            </del>
+
+                        {% else %}
+
+                            <span class="related-price">
+                                ₹{{ related_product.sale_price }}
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- BUTTONS -->
+
+                    <div class="d-flex gap-2">
+
+                        <a
+                            href="{% url 'products:products_details' related_product.name %}"
+                            class="btn btn-outline-dark btn-sm flex-fill"
+                        >
+                            View
+                        </a>
+
+
+                        {% if related_product.is_active and related_product.quantity > 0 %}
+
+                            <button
+                                type="button"
+                                class="btn btn-dark btn-sm flex-fill"
+                            >
+                                Cart
+                            </button>
+
+                        {% elif not related_product.is_active %}
+
+                            <button
+                                type="button"
+                                class="btn btn-secondary btn-sm flex-fill"
+                                disabled
+                            >
+                                Unavailable
+                            </button>
+
+                        {% else %}
+
+                            <button
+                                type="button"
+                                class="btn btn-secondary btn-sm flex-fill"
+                                disabled
+                            >
+                                Sold Out
+                            </button>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        {% empty %}
+
+        <div class="col-12">
+
+            <p class="text-muted small">
+                No related products available.
+            </p>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     BACK TO PRODUCTS
+===================================================== -->
+
+<div class="mt-4">
+
+    <a
+        href="{% url 'products:products' %}"
+        class="text-decoration-none small"
+    >
+        ← Back to Products
+    </a>
+
+</div>
+
+
+{% else %}
+
+
+<!-- =====================================================
+     PRODUCT NOT FOUND
+===================================================== -->
+
+<div class="text-center py-5">
+
+    <div class="mb-3">
+
+        <i class="bi bi-exclamation-circle fs-1 text-danger"></i>
+
+    </div>
+
+
+    <h3 class="fw-bold">
+        Product Not Found
+    </h3>
+
+
+    <p class="text-muted">
+
+        {{ message|default:"The product you are looking for does not exist or is no longer available." }}
+
+    </p>
+
+
+    <a
+        href="{% url 'products:products' %}"
+        class="btn btn-dark"
+    >
+        Back to Products
+    </a>
+
+</div>
+
+{% endif %}
+
+</div>
+
+
+<!-- =====================================================
+     JAVASCRIPT
+===================================================== -->
+
+<script>
+
+/* =========================================================
+   IMAGE CHANGE
+========================================================= */
+
+function changeProductImage(thumbnail) {
+
+    const mainImage =
+        document.getElementById("mainProductImage");
+
+    if (!mainImage) {
+        return;
+    }
+
+    mainImage.src = thumbnail.src;
+
+
+    document
+        .querySelectorAll(".product-thumb")
+        .forEach(function(image) {
+
+            image.classList.remove("active");
+
+        });
+
+
+    thumbnail.classList.add("active");
+
+
+    resetZoom();
+
+}
+
+
+/* =========================================================
+   VARIANT TAB / DROPDOWN DETAILS
+========================================================= */
+
+function showVariant(variantId, button) {
+
+    document
+        .querySelectorAll('.variant-details-panel')
+        .forEach(function(panel) {
+            panel.hidden = true;
+        });
+
+    document
+        .querySelectorAll('.variant-button')
+        .forEach(function(item) {
+            item.classList.remove('active');
+        });
+
+    const panel =
+        document.getElementById('variant-panel-' + variantId);
+
+    if (panel) {
+        panel.hidden = false;
+    }
+
+    if (button) {
+        button.classList.add('active');
+    }
+
+}
+
+
+function changeVariantImage(variantId, thumbnail) {
+
+    const mainImage =
+        document.getElementById('variant-main-image-' + variantId);
+
+    if (!mainImage) {
+        return;
+    }
+
+    mainImage.src = thumbnail.src;
+
+}
+
+
+/* =========================================================
+   ZOOM
+========================================================= */
+
+let zoomLevel = 1;
+
+const MIN_ZOOM = 1;
+const MAX_ZOOM = 3;
+const ZOOM_STEP = 0.25;
+
+
+function applyZoom() {
+
+    const image =
+        document.getElementById("mainProductImage");
+
+    if (!image) {
+        return;
+    }
+
+    image.style.transform =
+        "scale(" + zoomLevel + ")";
+
+}
+
+
+function zoomIn() {
+
+    if (zoomLevel < MAX_ZOOM) {
+
+        zoomLevel += ZOOM_STEP;
+
+        applyZoom();
+
+    }
+
+}
+
+
+function zoomOut() {
+
+    if (zoomLevel > MIN_ZOOM) {
+
+        zoomLevel -= ZOOM_STEP;
+
+        applyZoom();
+
+    }
+
+}
+
+
+function resetZoom() {
+
+    zoomLevel = 1;
+
+    const image =
+        document.getElementById("mainProductImage");
+
+    if (!image) {
+        return;
+    }
+
+    image.style.transform =
+        "scale(1)";
+
+    image.style.transformOrigin =
+        "center center";
+
+}
+
+
+/* =========================================================
+   MOUSE POSITION ZOOM
+========================================================= */
+
+const imageBox =
+    document.getElementById("productImageBox");
+
+
+if (imageBox) {
+
+    imageBox.addEventListener(
+        "mousemove",
+        function(event) {
+
+            const image =
+                document.getElementById("mainProductImage");
+
+            if (!image || zoomLevel <= 1) {
+                return;
+            }
+
+
+            const rect =
+                imageBox.getBoundingClientRect();
+
+
+            const x =
+                ((event.clientX - rect.left) / rect.width) * 100;
+
+            const y =
+                ((event.clientY - rect.top) / rect.height) * 100;
+
+
+            image.style.transformOrigin =
+                x + "% " + y + "%";
+
+        }
+    );
+
+
+    imageBox.addEventListener(
+        "mouseleave",
+        function() {
+
+            const image =
+                document.getElementById("mainProductImage");
+
+            if (!image) {
+                return;
+            }
+
+            image.style.transformOrigin =
+                "center center";
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   QUANTITY
+========================================================= */
+
+function getQuantityInput() {
+
+    return document.getElementById("quantity");
+
+}
+
+
+function increaseQuantity() {
+
+    const input =
+        getQuantityInput();
+
+    if (!input) {
+        return;
+    }
+
+
+    const max =
+        parseInt(input.max);
+
+
+    let value =
+        parseInt(input.value) || 1;
+
+
+    if (value < max) {
+
+        input.value =
+            value + 1;
+
+    }
+
+}
+
+
+function decreaseQuantity() {
+
+    const input =
+        getQuantityInput();
+
+    if (!input) {
+        return;
+    }
+
+
+    let value =
+        parseInt(input.value) || 1;
+
+
+    if (value > 1) {
+
+        input.value =
+            value - 1;
+
+    }
+
+}
+
+
+/* =========================================================
+   PREVENT INVALID QUANTITY
+========================================================= */
+
+const quantityInput =
+    document.getElementById("quantity");
+
+
+if (quantityInput) {
+
+    quantityInput.addEventListener(
+        "change",
+        function() {
+
+            let value =
+                parseInt(this.value) || 1;
+
+            const min =
+                parseInt(this.min) || 1;
+
+            const max =
+                parseInt(this.max);
+
+
+            if (value < min) {
+
+                value = min;
+
+            }
+
+
+            if (value > max) {
+
+                value = max;
+
+            }
+
+
+            this.value = value;
+
+        }
+    );
+
+}
+
+</script>
+
+
+{% endblock %}
