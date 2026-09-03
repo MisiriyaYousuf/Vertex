@@ -429,6 +429,12 @@
 
                 {% csrf_token %}
 
+                 <input
+                    type="hidden"
+                    name="return_to"
+                    value="{{ return_to }}"
+                >
+
 
                 <div class="address-form-grid">
 
@@ -681,15 +687,12 @@
 
                 <div class="form-actions">
 
-                    <a
-                        href="{% url 'users:address' %}"
+                   <a
+                        href="{% if return_to == 'checkout' %}{% url 'orders:checkout' %}{% else %}{% url 'users:address' %}{% endif %}"
                         class="cancel-btn"
                     >
-
                         Cancel
-
                     </a>
-
 
                     <button
                         type="submit"
