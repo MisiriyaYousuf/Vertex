@@ -1,0 +1,467 @@
+{% extends "user_base.html" %}
+
+{% block title %}
+My Orders
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+.orders-page {
+    background: #f6f7fb;
+    min-height: 90vh;
+    padding: 45px 0;
+}
+
+.orders-wrapper {
+    width: 90%;
+    max-width: 1100px;
+    margin: auto;
+}
+
+.orders-title {
+    font-size: 30px;
+    font-weight: 700;
+    margin-bottom: 25px;
+}
+
+/* SEARCH */
+
+.order-search {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.order-search input {
+    flex: 1;
+    border: 1px solid #ddd;
+    border-radius: 7px;
+    padding: 11px 14px;
+    outline: none;
+}
+
+.order-search input:focus {
+    border-color: #315170;
+}
+
+.search-btn {
+    border: none;
+    background: #315170;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 7px;
+}
+
+/* ORDER CARD */
+
+.order-card {
+    background: white;
+    border-radius: 14px;
+    padding: 22px;
+    margin-bottom: 18px;
+    box-shadow: 0 3px 15px rgba(0,0,0,0.05);
+}
+
+.order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+.order-id {
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.order-date {
+    color: #777;
+    font-size: 13px;
+    margin-top: 5px;
+}
+
+.order-status {
+    padding: 7px 13px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    background: #e8f7ed;
+    color: #198754;
+}
+
+/* DETAILS */
+
+.order-info {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-top: 20px;
+    padding-top: 18px;
+    border-top: 1px solid #eee;
+}
+
+.info-label {
+    color: #888;
+    font-size: 12px;
+    margin-bottom: 4px;
+}
+
+.info-value {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+/* ACTIONS */
+
+.order-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.order-actions form {
+    margin: 0;
+}
+
+.action-btn {
+    border: none;
+    border-radius: 7px;
+    padding: 9px 15px;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.view-btn {
+    background: #315170;
+    color: white;
+}
+
+.invoice-btn {
+    background: #f1f3f5;
+    color: #315170;
+}
+
+.cancel-btn {
+    background: #dc3545;
+    color: white;
+}
+
+/* EMPTY */
+
+.empty-orders {
+    background: white;
+    border-radius: 14px;
+    padding: 60px 20px;
+    text-align: center;
+    box-shadow: 0 3px 15px rgba(0,0,0,0.05);
+}
+
+.empty-orders h4 {
+    font-weight: 700;
+}
+
+.empty-orders p {
+    color: #777;
+}
+
+/* MOBILE */
+
+@media(max-width: 700px) {
+
+    .orders-page {
+        padding: 25px 0;
+    }
+
+    .orders-wrapper {
+        width: 94%;
+    }
+
+    .order-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .order-info {
+        grid-template-columns: 1fr;
+    }
+
+    .order-search {
+        flex-direction: column;
+    }
+
+    .search-btn {
+        width: 100%;
+    }
+
+}
+
+</style>
+
+<section class="orders-page">
+<div class="orders-wrapper">
+
+    <h1 class="orders-title">
+        My Orders
+    </h1>
+
+
+    <!-- =========================
+         SEARCH
+    ========================== -->
+
+    <form
+        method="GET"
+        class="order-search"
+    >
+
+        <input
+            type="text"
+            name="search"
+            value="{{ search }}"
+            placeholder="Search by Order ID"
+        >
+
+        <button
+            type="submit"
+            class="search-btn"
+        >
+            Search
+        </button>
+
+    </form>
+
+
+    <!-- =========================
+         ORDERS
+    ========================== -->
+
+    {% for order in orders %}
+
+        <div class="order-card">
+
+            <!-- ORDER HEADER -->
+
+            <div class="order-header">
+
+                <div>
+
+                    <div class="order-id">
+                        Order #{{ order.id }}
+                    </div>
+
+                    <div class="order-date">
+
+                        {{ order.created_at|date:"d M Y, h:i A" }}
+
+                    </div>
+
+                </div>
+
+
+                <span class="order-status">
+
+                    {{ order.get_status_display }}
+
+                </span>
+
+            </div>
+
+
+            <!-- ORDER INFORMATION -->
+
+            <div class="order-info">
+
+                <div>
+
+                    <div class="info-label">
+                        Order Date
+                    </div>
+
+                    <div class="info-value">
+                        {{ order.created_at|date:"d M Y" }}
+                    </div>
+
+                </div>
+
+
+                <div>
+
+                    <div class="info-label">
+                        Payment
+                    </div>
+
+                    <div class="info-value">
+                        {{ order.get_payment_method_display }}
+                    </div>
+
+                </div>
+
+
+                <div>
+
+                    <div class="info-label">
+                        Total Amount
+                    </div>
+
+                    <div class="info-value">
+                        ₹{{ order.total_amount|floatformat:2 }}
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =========================
+                 ACTIONS
+            ========================== -->
+
+            <div class="order-actions">
+
+
+                <!-- VIEW ORDER -->
+
+                <form
+                    method="POST"
+                    action="{% url 'orders:order_detail' %}"
+                >
+
+                    {% csrf_token %}
+
+                    <input
+                        type="hidden"
+                        name="order_id"
+                        value="{{ order.id }}"
+                    >
+
+                    <button
+                        type="submit"
+                        class="action-btn view-btn"
+                    >
+                        View Details
+                    </button>
+
+                </form>
+
+
+                <!-- DOWNLOAD INVOICE -->
+
+                <form
+                    method="POST"
+                    action="{% url 'orders:download_invoice' %}"
+                >
+
+                    {% csrf_token %}
+
+                    <input
+                        type="hidden"
+                        name="order_id"
+                        value="{{ order.id }}"
+                    >
+
+                    <button
+                        type="submit"
+                        class="action-btn invoice-btn"
+                    >
+                        Download Invoice
+                    </button>
+
+                </form>
+
+
+                <!-- CANCEL ORDER -->
+
+                {% if order.status != "Delivered" and order.status != "Cancelled" %}
+
+                    <form
+                        method="POST"
+                        action="{% url 'orders:cancel_order' %}"
+                        onsubmit="return confirmCancelOrder();"
+                    >
+
+                        {% csrf_token %}
+
+                        <input
+                            type="hidden"
+                            name="order_id"
+                            value="{{ order.id }}"
+                        >
+
+                        <input
+                            type="hidden"
+                            name="cancellation_reason"
+                            class="cancel-reason"
+                        >
+
+                        <button
+                            type="submit"
+                            class="action-btn cancel-btn"
+                        >
+                            Cancel Order
+                        </button>
+
+                    </form>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+    {% empty %}
+
+        <div class="empty-orders">
+
+            <h4>
+                No Orders Found
+            </h4>
+
+            {% if search %}
+
+                <p>
+                    No order found for "{{ search }}".
+                </p>
+
+            {% else %}
+
+                <p>
+                    You have not placed any orders yet.
+                </p>
+
+            {% endif %}
+
+        </div>
+
+    {% endfor %}
+
+</div>
+
+
+</section>
+
+<script>
+
+function confirmCancelOrder() {
+
+    const reason = prompt(
+        "Enter cancellation reason (optional):"
+    );
+
+    const form = event.target;
+
+    form.querySelector(
+        ".cancel-reason"
+    ).value = reason || "";
+
+    return confirm(
+        "Are you sure you want to cancel this entire order?"
+    );
+}
+
+</script>
+
+{% endblock %}

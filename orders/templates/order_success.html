@@ -1,0 +1,200 @@
+{% extends "user_base.html" %}
+
+{% block title %}
+    Order Successful
+{% endblock %}
+
+
+{% block content %}
+
+<style>
+
+.success-page {
+    min-height: 80vh;
+
+    background: #f6f7fb;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 50px 20px;
+}
+
+.success-card {
+    max-width: 600px;
+    width: 100%;
+
+    background: #fff;
+
+    border-radius: 18px;
+
+    padding: 50px 30px;
+
+    text-align: center;
+
+    box-shadow: 0 5px 25px rgba(0,0,0,0.07);
+}
+
+.success-icon {
+    width: 110px;
+    height: 110px;
+
+    margin: 0 auto 25px;
+
+    border-radius: 50%;
+
+    background: #e8f7ed;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #198754;
+
+    font-size: 55px;
+}
+
+.success-card h1 {
+    font-size: 30px;
+    font-weight: 700;
+
+    margin-bottom: 12px;
+}
+
+.success-card p {
+    color: #777;
+
+    font-size: 15px;
+
+    line-height: 1.6;
+}
+
+.order-number {
+    margin-top: 20px;
+
+    padding: 13px;
+
+    border-radius: 8px;
+
+    background: #f5f6f8;
+
+    color: #315170;
+
+    font-weight: 600;
+}
+
+.success-actions {
+    display: flex;
+
+    justify-content: center;
+
+    gap: 12px;
+
+    margin-top: 30px;
+}
+
+.success-btn {
+    padding: 12px 22px;
+
+    border-radius: 7px;
+
+    text-decoration: none;
+
+    font-size: 14px;
+
+    font-weight: 600;
+}
+
+.primary-btn {
+    background: #315170;
+    color: #fff;
+}
+
+.secondary-btn {
+    border: 1px solid #315170;
+    color: #315170;
+}
+
+.secondary-btn:hover {
+    background: #315170;
+    color: #fff;
+}
+
+@media(max-width:600px) {
+
+    .success-actions {
+        flex-direction: column;
+    }
+
+    .success-btn {
+        width: 100%;
+    }
+
+}
+
+</style>
+
+
+<section class="success-page">
+
+    <div class="success-card">
+
+
+        <div class="success-icon">
+
+            ✓
+
+        </div>
+
+
+        <h1>
+            Thank You!
+        </h1>
+
+
+        <p>
+
+            Your order has been placed successfully.
+
+            <br>
+
+            Your Cash on Delivery order has been received
+            and will be processed shortly.
+
+        </p>
+
+        <div class="success-actions">
+
+           <form method="POST" action="{% url 'orders:order_detail' %}">
+                {% csrf_token %}
+
+                <input
+                    type="hidden"
+                    name="order_id"
+                    value="{{ order.id }}"
+                >
+
+                <button
+                    type="submit"
+                    class="success-btn primary-btn"
+                >
+                    View Order
+                </button>
+            </form>
+
+
+            <a
+                href="{% url 'products:products' %}"
+                class="success-btn secondary-btn"
+            >
+                Continue Shopping
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
