@@ -1,0 +1,1096 @@
+{% extends 'user_base.html' %}
+{% load static %}
+
+{% block title %}Home - Vertex{% endblock %}
+
+{% block extra_css %}
+<style>
+
+    /* ================================
+       HERO SECTION
+    ================================= */
+
+    .hero_area {
+        position: relative;
+        min-height: 200vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* ================================
+       SLIDER SECTION
+    ================================= */
+
+    .slider_section {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        padding: 45px 0 75px 0;
+        position: relative;
+    }
+
+    .slider_section .slider_bg_box {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+    }
+
+    .slider_section .slider_bg_box img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+    }
+
+    .slider_section .detail-box h1 {
+        font-size: 48px;
+        font-weight: 700;
+        color: #ffffff;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        margin-bottom: 20px;
+    }
+
+    .slider_section .detail-box p {
+        color: #ffffff;
+        font-size: 16px;
+        line-height: 1.6;
+        text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        max-width: 500px;
+        margin-bottom: 30px;
+    }
+
+    .slider_section .detail-box .btn1 {
+        display: inline-block;
+        padding: 12px 35px;
+        background: var(--primary-color);
+        color: #ffffff;
+        border: 2px solid var(--primary-color);
+        border-radius: 30px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+    .slider_section .detail-box .btn1:hover {
+        background: transparent;
+        color: var(--primary-color);
+        transform: translateY(-3px);
+        box-shadow: 0 5px 20px rgba(88, 46, 121, 0.4);
+    }
+
+    .carousel-indicators {
+        bottom: -50px;
+    }
+
+    .carousel-indicators li {
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.5);
+        border: none;
+        margin: 0 8px;
+        transition: all 0.3s ease;
+    }
+
+    .carousel-indicators li.active {
+        background: var(--primary-color);
+        transform: scale(1.2);
+    }
+
+
+    /* ================================
+       PRODUCT SECTION
+    ================================= */
+
+    .product_section {
+        padding: 60px 0 80px 0;
+        background-color: var(--bg-light);
+    }
+
+    .product_heading h2 {
+        color: var(--primary-color);
+        font-weight: 500;
+        margin-bottom: 40px;
+        position: relative;
+        display: inline-block;
+    }
+
+    .product_heading h2::after {
+        display: none;
+    }
+
+
+    /* ================================
+       PRODUCT GRID
+    ================================= */
+
+    .product-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 25px;
+        margin-top: 30px;
+    }
+
+
+    /* ================================
+       PRODUCT CARD
+    ================================= */
+
+    .product-card {
+        background: #ffffff;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(88, 46, 121, 0.15);
+    }
+
+
+    /* ================================
+       PRODUCT IMAGE
+    ================================= */
+
+    .product-card .product-image {
+        width: 100%;
+        height: 220px;
+        overflow: hidden;
+        background: var(--bg-light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 15px;
+        position: relative;
+    }
+
+    .product-card .product-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        transition: transform 0.4s ease;
+    }
+
+    .product-card:hover .product-image img {
+        transform: scale(1.05);
+    }
+
+
+    /* ================================
+       PRODUCT DETAILS
+    ================================= */
+
+    .product-card .product-details {
+        padding: 15px 20px 20px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .product-card .product-name {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin: 0 0 5px 0;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        height: 40px;
+    }
+
+
+    /* ================================
+       PRODUCT PRICE
+    ================================= */
+
+    .product-card .product-price {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 8px;
+    }
+
+    .product-card .product-price span {
+        font-size: 13px;
+        font-weight: 400;
+        color: #999;
+    }
+
+
+    /* ================================
+       PRODUCT RATING
+    ================================= */
+
+    .product-card .product-rating {
+        display: flex;
+        align-items: center;
+        gap: 3px;
+        margin-bottom: 10px;
+    }
+
+    .product-card .product-rating i {
+        color: #ffc107;
+        font-size: 13px;
+    }
+
+    .product-card .product-rating .rating-text {
+        color: #999;
+        font-size: 12px;
+        margin-left: 5px;
+    }
+
+
+    /* ================================
+       PRODUCT ACTIONS
+    ================================= */
+
+    .product-card .product-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: auto;
+        padding-top: 12px;
+        border-top: 1px solid #f0f0f0;
+    }
+
+
+    /* ================================
+       ADD TO CART
+    ================================= */
+
+    .product-card .add-to-cart-btn {
+        flex: 1;
+        padding: 8px 15px;
+        background: var(--primary-color);
+        color: #ffffff;
+        border: none;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+        text-align: center;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+    }
+
+    .product-card .add-to-cart-btn:hover {
+        background: var(--primary-light);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(88, 46, 121, 0.3);
+    }
+
+
+    /* ================================
+       WISHLIST
+    ================================= */
+
+    .product-card .wishlist-btn {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        border: 1px solid #e0e0e0;
+        background: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-left: 10px;
+        flex-shrink: 0;
+    }
+
+    .product-card .wishlist-btn:hover {
+        border-color: var(--primary-color);
+        background: var(--bg-light);
+    }
+
+    .product-card .wishlist-btn i {
+        color: #ccc;
+        transition: all 0.3s ease;
+        font-size: 16px;
+    }
+
+    .product-card .wishlist-btn i.active {
+        color: #ff0000;
+    }
+
+    .product-card .wishlist-btn:hover i {
+        color: var(--primary-color);
+    }
+
+    .product-card .wishlist-btn i.active:hover {
+        color: #ff0000;
+    }
+
+
+    /* ================================
+       RESPONSIVE
+    ================================= */
+
+    @media (max-width: 991px) {
+
+        .slider_section .detail-box h1 {
+            font-size: 30px;
+        }
+
+        .product-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+    }
+
+
+    @media (max-width: 768px) {
+
+        .product-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .product-card .product-image {
+            height: 180px;
+        }
+
+        .product-card .product-name {
+            font-size: 14px;
+            height: 36px;
+        }
+
+        .product-card .product-price {
+            font-size: 16px;
+        }
+    }
+
+
+    @media (max-width: 576px) {
+
+        .slider_section .detail-box h1 {
+            font-size: 20px;
+        }
+
+        .slider_section .detail-box p {
+            font-size: 14px;
+        }
+
+        .product-grid {
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .product-card .product-image {
+            height: 150px;
+            padding: 10px;
+        }
+
+        .product-card .product-details {
+            padding: 10px 12px 15px;
+        }
+
+        .product-card .product-name {
+            font-size: 13px;
+            height: 32px;
+        }
+
+        .product-card .product-price {
+            font-size: 14px;
+        }
+
+        .product-card .add-to-cart-btn {
+            font-size: 11px;
+            padding: 6px 12px;
+        }
+
+        .product-card .wishlist-btn {
+            width: 30px;
+            height: 30px;
+        }
+
+        .product-card .wishlist-btn i {
+            font-size: 14px;
+        }
+    }
+
+
+    @media (max-width: 400px) {
+
+        .product-grid {
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .product-card .product-image {
+            height: 130px;
+            padding: 8px;
+        }
+
+        .product-card .product-details {
+            padding: 8px 10px 12px;
+        }
+
+        .product-card .product-name {
+            font-size: 12px;
+            height: 28px;
+        }
+
+        .product-card .product-price {
+            font-size: 13px;
+        }
+
+        .product-card .add-to-cart-btn {
+            font-size: 10px;
+            padding: 5px 10px;
+        }
+    }
+
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<!-- ==========================================
+     HERO / SLIDER SECTION
+=========================================== -->
+
+<section class="slider_section">
+
+    <div class="slider_bg_box">
+        <img
+            src="{% static 'images/slider-bg.jpg' %}"
+            alt="Vertex Watches Banner"
+        >
+    </div>
+
+    <div
+        id="customCarousel1"
+        class="carousel slide"
+        data-ride="carousel"
+    >
+
+        <div class="carousel-inner">
+
+            <!-- Slide 1 -->
+            <div class="carousel-item active">
+
+                <div class="container">
+
+                    <div class="row">
+
+                        <div class="col-md-7">
+
+                            <div class="detail-box">
+
+                                <h1>
+                                    Stylish Watches
+                                </h1>
+
+                                <p>
+                                    Vertex offers a curated collection of
+                                    wristwatches that blend luxury with
+                                    practicality, perfect for both casual
+                                    and formal occasions.
+                                </p>
+
+                                <div class="btn-box">
+
+                                    <a
+                                        href="https://www.tissotwatches.com/en-in"
+                                        class="btn1"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        Read More
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Slide 2 -->
+            <div class="carousel-item">
+
+                <div class="container">
+
+                    <div class="row">
+
+                        <div class="col-md-7">
+
+                            <div class="detail-box">
+
+                                <h1>
+                                    Affordable Luxury
+                                </h1>
+
+                                <p>
+                                    Signature Seconds balances quality with
+                                    affordability, making luxury watches
+                                    accessible to all.
+                                </p>
+
+                                <div class="btn-box">
+
+                                    <a
+                                        href="https://www.tissotwatches.com/en-in"
+                                        class="btn1"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        Read More
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Slide 3 -->
+            <div class="carousel-item">
+
+                <div class="container">
+
+                    <div class="row">
+
+                        <div class="col-md-7">
+
+                            <div class="detail-box">
+
+                                <h1>
+                                    Wide Selection
+                                </h1>
+
+                                <p>
+                                    From classic analog watches to
+                                    sophisticated chronographs and
+                                    smartwatches, the store provides a
+                                    diverse range to suit every style
+                                    and need.
+                                </p>
+
+                                <div class="btn-box">
+
+                                    <a
+                                        href="https://www.tissotwatches.com/en-in"
+                                        class="btn1"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        Read More
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Slide 4 -->
+            <div class="carousel-item">
+
+                <div class="container">
+
+                    <div class="row">
+
+                        <div class="col-md-7">
+
+                            <div class="detail-box">
+
+                                <h1>
+                                    Customer-Centric
+                                </h1>
+
+                                <p>
+                                    Easy navigation, secure payment options,
+                                    and excellent after-sales service ensure
+                                    a seamless shopping experience.
+                                </p>
+
+                                <div class="btn-box">
+
+                                    <a
+                                        href="https://www.tissotwatches.com/en-in"
+                                        class="btn1"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        Read More
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Slide 5 -->
+            <div class="carousel-item">
+
+                <div class="container">
+
+                    <div class="row">
+
+                        <div class="col-md-7">
+
+                            <div class="detail-box">
+
+                                <h1>
+                                    Trusted Brands
+                                </h1>
+
+                                <p>
+                                    Partnered with renowned brands to
+                                    guarantee authenticity and reliability.
+                                </p>
+
+                                <div class="btn-box">
+
+                                    <a
+                                        href="https://www.tissotwatches.com/en-in"
+                                        class="btn1"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        Read More
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Carousel Indicators -->
+
+        <ol class="carousel-indicators">
+
+            <li
+                data-target="#customCarousel1"
+                data-slide-to="0"
+                class="active"
+            ></li>
+
+            <li
+                data-target="#customCarousel1"
+                data-slide-to="1"
+            ></li>
+
+            <li
+                data-target="#customCarousel1"
+                data-slide-to="2"
+            ></li>
+
+            <li
+                data-target="#customCarousel1"
+                data-slide-to="3"
+            ></li>
+
+            <li
+                data-target="#customCarousel1"
+                data-slide-to="4"
+            ></li>
+
+        </ol>
+
+    </div>
+
+</section>
+
+
+<!-- ==========================================
+     PRODUCT SECTION
+=========================================== -->
+
+<section class="product_section">
+
+    <div class="container">
+
+        <div class="product_heading text-center">
+            <h2>
+                Top Sale Watches
+            </h2>
+        </div>
+
+
+        <div class="product-grid">
+
+            {% for product in products %}
+
+            <div class="product-card">
+
+                <!-- Product Image -->
+
+                <a
+                    href="{% url 'products:products_details' product.name %}"
+                    class="product-image"
+                    style="text-decoration: none;"
+                >
+
+                    {% if product.main_image %}
+
+                        <img
+                            src="{{ product.main_image.image.url }}"
+                            alt="{{ product.name }}"
+                        >
+
+                    {% else %}
+
+                        <img
+                            src="{% static 'images/no-image.png' %}"
+                            alt="No image available"
+                        >
+
+                    {% endif %}
+
+                </a>
+
+
+                <!-- Product Details -->
+
+                <div class="product-details">
+
+                    <a
+                        href="{% url 'products:products_details' product.name %}"
+                        style="text-decoration: none; color: inherit;"
+                    >
+
+                        <h6 class="product-name">
+                            {{ product.name }}
+                        </h6>
+
+                    </a>
+
+
+                    <!-- Price -->
+
+                    <div class="product-price">
+
+                        {% if product.discount_price %}
+
+                            <span>₹</span>
+                            {{ product.discount_price|floatformat:2 }}
+
+                            {% if product.sale_price %}
+                                <del>
+                                    ₹{{ product.sale_price|floatformat:2 }}
+                                </del>
+                            {% endif %}
+
+                        {% else %}
+
+                            <span>₹</span>
+                            {{ product.sale_price|floatformat:2 }}
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- Rating -->
+
+                    <div class="product-rating">
+
+                        <i
+                            class="fa fa-star"
+                            aria-hidden="true"
+                        ></i>
+
+                        <i
+                            class="fa fa-star"
+                            aria-hidden="true"
+                        ></i>
+
+                        <i
+                            class="fa fa-star"
+                            aria-hidden="true"
+                        ></i>
+
+                        <i
+                            class="fa fa-star"
+                            aria-hidden="true"
+                        ></i>
+
+                        <i
+                            class="fa fa-star"
+                            aria-hidden="true"
+                        ></i>
+
+                        <span class="rating-text">
+                            (5.0)
+                        </span>
+
+                    </div>
+
+
+                    <!-- Actions -->
+
+                    <div class="product-actions">
+
+                        {% if product.quantity > 0 %}
+
+                            <form
+                                method="POST"
+                                action="{% url 'cart:add_to_cart' %}"
+                            >
+
+                                {% csrf_token %}
+
+                                <input
+                                    type="hidden"
+                                    name="product_id"
+                                    value="{{ product.id }}"
+                                >
+
+                                <button
+                                    type="submit"
+                                    class="add-to-cart-btn"
+                                >
+
+                                    <i class="fas fa-cart-plus"></i>
+
+                                    Add to Cart
+
+                                </button>
+
+                            </form>
+
+                        {% else %}
+
+                            <button
+                                type="button"
+                                class="add-to-cart-btn"
+                                disabled
+                            >
+                                Out of Stock
+                            </button>
+
+                        {% endif %}
+
+
+                        <form
+                            method="POST"
+                            action="{% url 'cart:add_to_wishlist' %}"
+                        >
+                            {% csrf_token %}
+
+                            <input
+                                type="hidden"
+                                name="product_id"
+                                value="{{ product.id }}"
+                            >
+
+                            <button
+                                type="submit"
+                                class="wishlist-btn"
+                                title="Add to Wishlist"
+                                aria-label="Add {{ product.name }} to wishlist"
+                            >
+                                ♡
+                            </button>
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% empty %}
+
+            <div class="col-12 text-center py-5">
+
+                <i
+                    class="fas fa-clock fa-3x text-muted mb-3"
+                ></i>
+
+                <h4 class="text-muted">
+                    No products available
+                </h4>
+
+                <p class="text-muted">
+                    Check back later for new arrivals!
+                </p>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script>
+
+    /* ==========================================
+       WISHLIST
+    =========================================== */
+
+    function toggleWishlist(element, productId) {
+
+        const icon = element.querySelector('i');
+
+        icon.classList.toggle('active');
+
+        if (icon.classList.contains('active')) {
+
+            showToast(
+                'Added to wishlist!',
+                'success'
+            );
+
+        } else {
+
+            showToast(
+                'Removed from wishlist!',
+                'info'
+            );
+
+        }
+
+        console.log(
+            'Wishlist toggled for product:',
+            productId
+        );
+    }
+
+
+    /* ==========================================
+       ADD TO CART
+    =========================================== */
+
+    function addToCart(productId) {
+
+        console.log(
+            'Adding product to cart:',
+            productId
+        );
+
+        fetch(
+            `/users/add-to-cart/${productId}/`,
+            {
+                method: 'POST',
+
+                headers: {
+                    'X-CSRFToken': getCSRFToken(),
+                    'Content-Type': 'application/json'
+                },
+
+                credentials: 'same-origin'
+            }
+        )
+
+        .then(response => response.json())
+
+        .then(data => {
+
+            if (data.success) {
+
+                showToast(
+                    data.message,
+                    'success'
+                );
+
+                updateCartCount(
+                    data.cart_count
+                );
+
+            } else {
+
+                showToast(
+                    data.message || 'Error adding to cart',
+                    'error'
+                );
+
+            }
+
+        })
+
+        .catch(error => {
+
+            console.error(
+                'Error:',
+                error
+            );
+
+            showToast(
+                'Network error. Please try again.',
+                'error'
+            );
+
+        });
+    }
+
+
+    /* ==========================================
+       CAROUSEL
+    =========================================== */
+
+    $(document).ready(function() {
+
+        $('#customCarousel1').carousel({
+            interval: 5000,
+            pause: 'hover'
+        });
+
+    });
+
+</script>
+
+{% endblock %}

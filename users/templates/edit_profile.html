@@ -1,0 +1,1031 @@
+{% extends 'user_base.html' %}
+{% load static %}
+
+{% block title %}Edit Profile - Vertex{% endblock %}
+
+
+{% block extra_css %}
+
+<style>
+
+/* ========================================
+   EDIT PROFILE PAGE
+======================================== */
+
+.edit-profile-section {
+    background: #f6f7fb;
+    min-height: 85vh;
+    padding: 50px 0;
+}
+
+.edit-profile-wrapper {
+    max-width: 1100px;
+    margin: auto;
+}
+
+
+/* ========================================
+   PAGE HEADER
+======================================== */
+
+.edit-page-header {
+    margin-bottom: 25px;
+}
+
+.edit-page-header h2 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+    color: #222;
+}
+
+.edit-page-header p {
+    margin-top: 6px;
+    color: #888;
+    font-size: 14px;
+}
+
+
+/* ========================================
+   MAIN LAYOUT
+======================================== */
+
+.edit-profile-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 25px;
+}
+
+
+/* ========================================
+   LEFT PROFILE CARD
+======================================== */
+
+.edit-profile-sidebar {
+    background: #fff;
+    border-radius: 16px;
+    padding: 30px 20px;
+    height: fit-content;
+
+    box-shadow: 0 3px 18px rgba(0,0,0,0.05);
+}
+
+.edit-avatar-wrapper {
+    text-align: center;
+}
+
+
+/* ========================================
+   AVATAR
+======================================== */
+
+.avatar-container {
+    position: relative;
+
+    width: 110px;
+    height: 110px;
+
+    margin: 0 auto 18px;
+}
+
+.profile-image,
+.default-profile {
+    width: 110px;
+    height: 110px;
+
+    border-radius: 50%;
+
+    object-fit: cover;
+}
+
+.profile-image {
+    border: 4px solid #fff;
+
+    box-shadow: 0 4px 15px rgba(0,0,0,0.12);
+}
+
+.default-profile {
+    background: #f0f1f5;
+    color: #aaa;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 50px;
+}
+
+
+/* ========================================
+   AVATAR EDIT BUTTON
+======================================== */
+
+.avatar-edit-btn {
+    position: absolute;
+
+    right: -2px;
+    bottom: -2px;
+
+    width: 25px;
+    height: 25px;
+
+    border-radius: 50%;
+
+    background: var(--primary-color);
+    color: #fff;
+
+    border: 3px solid #fff;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+
+    font-size: 8px;
+
+    transition: 0.2s;
+}
+
+.avatar-edit-btn:hover {
+    transform: scale(1.1);
+}
+
+
+/* ========================================
+   PROFILE NAME
+======================================== */
+
+.edit-avatar-wrapper h3 {
+    margin: 0;
+
+    font-size: 18px;
+    font-weight: 700;
+
+    color: #222;
+}
+
+.profile-email {
+    margin-top: 5px;
+
+    font-size: 13px;
+    color: #999;
+
+    word-break: break-word;
+}
+
+.profile-help {
+    margin-top: 15px;
+
+    font-size: 12px;
+    color: #999;
+
+    line-height: 1.5;
+}
+
+
+/* ========================================
+   SIDEBAR MENU
+======================================== */
+
+.edit-profile-menu {
+    margin-top: 30px;
+}
+
+.edit-profile-menu a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 13px 15px;
+    margin-bottom: 6px;
+
+    border-radius: 9px;
+
+    text-decoration: none;
+
+    color: #555;
+
+    font-size: 14px;
+    font-weight: 500;
+
+    transition: 0.2s;
+}
+
+.edit-profile-menu a:hover {
+    background: #f5f5f5;
+    color: var(--primary-color);
+}
+
+.edit-profile-menu a.active {
+    background: var(--primary-color);
+    color: #fff;
+}
+
+.edit-profile-menu i {
+    width: 18px;
+    text-align: center;
+}
+
+
+/* ========================================
+   RIGHT CONTENT
+======================================== */
+
+.edit-profile-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+
+/* ========================================
+   FORM CARD
+======================================== */
+
+.edit-form-card {
+    background: #fff;
+
+    border-radius: 16px;
+
+    padding: 30px;
+
+    box-shadow: 0 3px 18px rgba(0,0,0,0.05);
+}
+
+
+/* ========================================
+   CARD HEADER
+======================================== */
+
+.form-card-header {
+    margin-bottom: 25px;
+
+    padding-bottom: 18px;
+
+    border-bottom: 1px solid #eee;
+}
+
+.form-card-header h4 {
+    margin: 0;
+
+    font-size: 18px;
+    font-weight: 700;
+
+    color: #222;
+}
+
+.form-card-header p {
+    margin: 5px 0 0;
+
+    font-size: 13px;
+
+    color: #999;
+}
+
+
+/* ========================================
+   FORM GRID
+======================================== */
+
+.form-grid {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 20px;
+}
+
+.form-group {
+    margin-bottom: 5px;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+
+/* ========================================
+   LABELS
+======================================== */
+
+.form-group label {
+    display: block;
+
+    margin-bottom: 8px;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    color: #444;
+}
+
+
+/* ========================================
+   INPUTS
+======================================== */
+
+.form-control {
+    width: 100%;
+
+    padding: 12px 14px;
+
+    border: 1px solid #e2e2e2;
+
+    border-radius: 9px;
+
+    background: #fff;
+
+    color: #333;
+
+    font-size: 14px;
+
+    outline: none;
+
+    transition: 0.2s;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+
+    box-shadow: 0 0 0 3px rgba(0,0,0,0.04);
+}
+
+.form-control::placeholder {
+    color: #aaa;
+}
+
+
+/* ========================================
+   TEXTAREA
+======================================== */
+
+textarea.form-control {
+    min-height: 110px;
+
+    resize: vertical;
+}
+
+
+/* ========================================
+   EMAIL NOTE
+======================================== */
+
+.form-note {
+    display: block;
+
+    margin-top: 7px;
+
+    font-size: 11px;
+
+    color: #999;
+}
+
+
+/* ========================================
+   ERRORS
+======================================== */
+
+.error {
+    margin-top: 5px;
+
+    font-size: 12px;
+
+    color: #dc3545;
+}
+
+
+/* ========================================
+   ALERT
+======================================== */
+
+.alert {
+    border-radius: 9px;
+
+    font-size: 13px;
+}
+
+
+/* ========================================
+   ACTION BAR
+======================================== */
+
+.form-actions {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-end;
+
+    gap: 10px;
+
+    margin-top: 25px;
+
+    padding-top: 20px;
+
+    border-top: 1px solid #eee;
+}
+
+
+/* ========================================
+   SAVE BUTTON
+======================================== */
+
+.save-btn {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    padding: 11px 22px;
+
+    border: none;
+
+    border-radius: 9px;
+
+    background: var(--primary-color);
+
+    color: #fff;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.save-btn:hover {
+    opacity: 0.9;
+
+    transform: translateY(-1px);
+}
+
+
+/* ========================================
+   CANCEL BUTTON
+======================================== */
+
+.cancel-btn {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 10px 20px;
+
+    border: 1px solid #ddd;
+
+    border-radius: 9px;
+
+    background: #fff;
+
+    color: #555;
+
+    text-decoration: none;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    transition: 0.2s;
+}
+
+.cancel-btn:hover {
+    background: #f7f7f7;
+
+    color: #333;
+}
+
+
+/* ========================================
+   MOBILE
+======================================== */
+
+@media(max-width: 850px) {
+
+    .edit-profile-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .edit-profile-sidebar {
+        padding: 25px;
+    }
+
+    .edit-profile-menu {
+        display: flex;
+
+        gap: 8px;
+
+        overflow-x: auto;
+    }
+
+    .edit-profile-menu a {
+        white-space: nowrap;
+
+        margin-bottom: 0;
+    }
+
+}
+
+
+/* ========================================
+   SMALL MOBILE
+======================================== */
+
+@media(max-width: 600px) {
+
+    .edit-profile-section {
+        padding: 30px 15px;
+    }
+
+    .edit-page-header h2 {
+        font-size: 23px;
+    }
+
+    .edit-form-card {
+        padding: 20px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-group.full-width {
+        grid-column: auto;
+    }
+
+    .form-actions {
+        flex-direction: column-reverse;
+
+        align-items: stretch;
+    }
+
+    .save-btn,
+    .cancel-btn {
+        width: 100%;
+    }
+
+}
+
+</style>
+
+{% endblock %}
+
+
+
+{% block content %}
+
+<section class="edit-profile-section">
+
+    <div class="container edit-profile-wrapper">
+
+
+        <!-- ========================================
+             PAGE HEADER
+        ========================================= -->
+
+        <div class="edit-page-header">
+
+            <h2>
+                Edit profile
+            </h2>
+
+            <p>
+                Update your personal information and account details.
+            </p>
+
+        </div>
+
+
+        <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="edit-profile-layout">
+            <!-- ========================================
+                 LEFT SIDEBAR
+            ========================================= -->
+
+            <aside class="edit-profile-sidebar">
+
+               <div class="edit-avatar-wrapper">
+
+                        <div class="avatar-container">
+
+                            {% if user.profile.profile_image %}
+
+                                <img
+                                    src="{{ user.profile.profile_image.url }}"
+                                    class="profile-image"
+                                    alt="Profile Image"
+                                    id="profile-preview"
+                                >
+
+                            {% else %}
+
+                                <div
+                                    class="default-profile"
+                                    id="profile-preview"
+                                >
+                                    <i class="fas fa-user"></i>
+                                </div>
+
+                            {% endif %}
+
+
+                            <label
+                                for="profile-image-input"
+                                class="avatar-edit-btn"
+                                title="Change profile picture"
+                            >
+                                <i class="fas fa-pen"></i>
+                            </label>
+
+                        </div>
+
+
+                        <div style="display:none;">
+                            {{ form.profile_image }}
+                        </div>
+
+
+                        <h3>
+                            {{ user.first_name|default:"User" }}
+                            {{ user.last_name }}
+                        </h3>
+
+                        <div class="profile-email">
+                            {{ user.email }}
+                        </div>
+
+                        <p class="profile-help">
+                            Click the pencil icon to change your profile picture.
+                            JPG, PNG and WEBP up to 2 MB.
+                        </p>
+
+                    </div>
+
+
+
+                <!-- SIDEBAR MENU -->
+
+                <nav class="edit-profile-menu">
+
+
+                    <a
+                        href="{% url 'users:user_profile' %}"
+                    >
+
+                        <i class="fas fa-user"></i>
+
+                        <span>
+                            Personal Information
+                        </span>
+
+                    </a>
+
+
+                    <a
+                        href="{% url 'users:edit_profile' %}"
+                        class="active"
+                    >
+
+                        <i class="fas fa-edit"></i>
+
+                        <span>
+                            Edit Profile
+                        </span>
+
+                    </a>
+
+
+                    <a href="#">
+
+                        <i class="fas fa-shopping-bag"></i>
+
+                        <span>
+                            My Orders
+                        </span>
+
+                    </a>
+
+                     <a
+                        href="{% url 'users:address' %}"
+                    >
+
+                        <i class="fas fa-map-marker-alt"></i>
+
+                        <span>My Address</span>
+
+                    </a>
+
+                     </a>
+
+
+                    <a
+                        href="{% url 'users:change_password' %}"
+                    >
+
+                        <i class="fas fa-lock"></i>
+
+                        <span>Password & Security</span>
+
+                    </a>
+
+                </nav>
+
+            </aside>
+
+
+
+            <!-- ========================================
+                 RIGHT CONTENT
+            ========================================= -->
+
+            <main class="edit-profile-content">
+
+
+                <!-- ========================================
+                     MESSAGES
+                ========================================= -->
+
+                {% if messages %}
+
+                    {% for message in messages %}
+
+                        <div class="alert alert-{{ message.tags }}">
+
+                            {{ message }}
+
+                        </div>
+
+                    {% endfor %}
+
+                {% endif %}
+
+
+
+                <!-- ========================================
+                     PERSONAL INFORMATION
+                ========================================= -->
+
+                <div class="edit-form-card">
+
+
+                    <div class="form-card-header">
+
+                        <h4>
+                            Personal Information
+                        </h4>
+
+                        <p>
+                            Update your name and email address.
+                        </p>
+
+                    </div>
+
+                        <div class="form-grid">
+
+                            <!-- FIRST NAME -->
+
+                            <div class="form-group">
+
+                                <label>
+                                    First Name
+                                </label>
+
+                                {{ form.first_name }}
+
+                                {% for error in form.first_name.errors %}
+                                    <div class="error">
+                                        {{ error }}
+                                    </div>
+                                {% endfor %}
+
+                            </div>
+
+
+                            <!-- LAST NAME -->
+
+                            <div class="form-group">
+
+                                <label>
+                                    Last Name
+                                </label>
+
+                                {{ form.last_name }}
+
+                                {% for error in form.last_name.errors %}
+                                    <div class="error">
+                                        {{ error }}
+                                    </div>
+                                {% endfor %}
+
+                            </div>
+
+
+                            <!-- EMAIL -->
+
+                            <div class="form-group full-width">
+
+                                <label>
+                                    Email Address
+                                </label>
+
+                                {{ form.email }}
+
+                                {% for error in form.email.errors %}
+                                    <div class="error">
+                                        {{ error }}
+                                    </div>
+                                {% endfor %}
+
+                                <small class="form-note">
+                                    Changing your email requires OTP verification.
+                                </small>
+
+                            </div>
+
+
+                            <!-- PHONE -->
+
+                            <div class="form-group full-width">
+
+                                <label>
+                                    Phone Number
+                                </label>
+
+                                {{ form.phone }}
+
+                                {% for error in form.phone.errors %}
+                                    <div class="error">
+                                        {{ error }}
+                                    </div>
+                                {% endfor %}
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ACTIONS -->
+
+                        <div class="form-actions">
+
+                            <a
+                                href="{% url 'users:user_profile' %}"
+                                class="cancel-btn"
+                            >
+                                Cancel
+                            </a>
+
+                            <button
+                                type="submit"
+                                class="save-btn"
+                            >
+
+                                <i class="fas fa-check"></i>
+
+                                Save Changes
+
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+
+            </main>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
+
+<script>
+
+document.addEventListener(
+    'DOMContentLoaded',
+    function () {
+
+        const imageInput =
+            document.getElementById(
+                'profile-image-input'
+            );
+
+        const preview =
+            document.getElementById(
+                'profile-preview'
+            );
+
+
+        if (!imageInput || !preview) {
+            return;
+        }
+
+
+        imageInput.addEventListener(
+            'change',
+            function (event) {
+
+                const file =
+                    event.target.files[0];
+
+                if (!file) {
+                    return;
+                }
+
+
+                const allowedTypes = [
+                    'image/jpeg',
+                    'image/png',
+                    'image/webp'
+                ];
+
+
+                if (!allowedTypes.includes(
+                    file.type
+                )) {
+
+                    alert(
+                        'Only JPG, PNG and WEBP images are allowed.'
+                    );
+
+                    imageInput.value = '';
+
+                    return;
+                }
+
+
+                if (
+                    file.size >
+                    2 * 1024 * 1024
+                ) {
+
+                    alert(
+                        'Profile image must be smaller than 2 MB.'
+                    );
+
+                    imageInput.value = '';
+
+                    return;
+                }
+
+
+                const reader =
+                    new FileReader();
+
+
+                reader.onload = function (e) {
+
+                    if (
+                        preview.tagName.toLowerCase()
+                        === 'img'
+                    ) {
+
+                        preview.src =
+                            e.target.result;
+
+                    } else {
+
+                        const img =
+                            document.createElement(
+                                'img'
+                            );
+
+                        img.src =
+                            e.target.result;
+
+                        img.id =
+                            'profile-preview';
+
+                        img.className =
+                            'profile-image';
+
+                        img.alt =
+                            'Profile Image';
+
+                        preview.replaceWith(img);
+
+                    }
+
+                };
+
+
+                reader.readAsDataURL(file);
+
+            }
+        );
+
+    }
+);
+
+</script>
