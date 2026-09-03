@@ -1,0 +1,175 @@
+.address-container {
+    max-width: 850px;
+    margin: 40px auto;
+    padding: 35px;
+    background: #ffffff;
+    border-radius: 18px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+}
+
+.address-header {
+    margin-bottom: 30px;
+}
+
+.address-header h2 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.address-header p {
+    margin-top: 8px;
+    color: #777;
+}
+
+.address-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+}
+
+.form-group input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 14px 16px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    outline: none;
+    font-size: 15px;
+    transition: 0.25s ease;
+}
+
+.form-group input:focus {
+    border-color: #111;
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.06);
+}
+
+.address-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.address-type-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.radio-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 18px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.radio-option:hover {
+    border-color: #999;
+}
+
+.radio-option input {
+    width: auto;
+    margin: 0;
+    accent-color: #111;
+}
+
+.radio-option:has(input:checked) {
+    border-color: #111;
+    background: #f5f5f5;
+}
+
+.default-address {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-top: 5px;
+}
+
+.default-address input {
+    width: 18px;
+    height: 18px;
+    accent-color: #111;
+}
+
+.default-address label {
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.form-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.cancel-btn,
+.add-address-btn {
+    padding: 13px 25px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+
+.cancel-btn {
+    text-decoration: none;
+    color: #333;
+    background: #f2f2f2;
+}
+
+.cancel-btn:hover {
+    background: #e5e5e5;
+}
+
+.add-address-btn {
+    border: none;
+    background: #111;
+    color: #fff;
+}
+
+.add-address-btn:hover {
+    background: #333;
+    transform: translateY(-1px);
+}
+
+@media (max-width: 600px) {
+
+    .address-container {
+        margin: 20px 15px;
+        padding: 22px;
+    }
+
+    .address-row {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .form-buttons {
+        flex-direction: column-reverse;
+    }
+
+    .cancel-btn,
+    .add-address-btn {
+        width: 100%;
+        text-align: center;
+    }
+
+}
