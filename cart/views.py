@@ -7,25 +7,17 @@ from products.models import Product
 from .models import Cart,Wishlist
 
 MAX_CART_QUANTITY = 5
-
 @login_required
 def cart_view(request):
-    
-    cart_items = Cart.objects.filter(
-        user=request.user
-    ).select_related(
-        "product",
-        "product__category"
-    )
 
+    cart_items = Cart.objects.filter(user=request.user).select_related("product","product__category")
     cart_total = 0
-
+    total_items = 0
     has_invalid_items = False
     has_out_of_stock_items = False
     has_exceeded_stock_items = False
 
     for item in cart_items:
-
         product = item.product
         item.is_invalid = False
         item.is_out_of_stock = False
@@ -34,80 +26,57 @@ def cart_view(request):
         if not product:
             item.is_invalid = True
             has_invalid_items = True
-
             item.subtotal = 0
             continue
 
-
-        product_invalid = (
-            not product.is_active
-            or getattr(product, "is_blocked", False)
-        )
-
-        
+        product_invalid = (not product.is_active or getattr(product, "is_blocked", False))
         category_invalid = False
-
         if not product.category:
             category_invalid = True
         else:
-            category_invalid = (
-                product.category.is_trashed
-                or getattr(
-                    product.category,
-                    "is_blocked",
-                    False
-                )
-            )
-
-
+            category_invalid = (product.category.is_trashed or getattr( product.category,"is_blocked",False))
         if product_invalid or category_invalid:
             item.is_invalid = True
             has_invalid_items = True
-
     
         if product.quantity <= 0:
-
             item.is_out_of_stock = True
             has_out_of_stock_items = True
-
         elif item.quantity > product.quantity:
-
             item.has_exceeded_stock = True
             has_exceeded_stock_items = True
-
+    
         if product.discount_price:
             price = product.discount_price
         else:
             price = product.sale_price
 
-        if (not item.is_invalid and not item.is_out_of_stock and not item.has_exceeded_stock):
+        item.discount_percentage = 0
+        if (product.discount_price and product.sale_price and product.sale_price > product.discount_price):
+            item.discount_percentage = round(( (product.sale_price - product.discount_price) / product.sale_price ) * 100 )
+
+        if ( not item.is_invalid and not item.is_out_of_stock and not item.has_exceeded_stock ):
             item.subtotal = price * item.quantity
             cart_total += item.subtotal
-        else :
-             item.subtotal = 0
-
+            total_items += item.quantity
+        else:
+            item.subtotal = 0
+        item.delivery_charge = 0
+        item.delivery_text = "FREE delivery"
     shipping_charge = 0
-
     grand_total = cart_total + shipping_charge
-
     context = {
         "cart_items": cart_items,
-
         "cart_total": cart_total,
         "shipping_charge": shipping_charge,
         "grand_total": grand_total,
-
+        "total_items": total_items,
         "has_invalid_items": has_invalid_items,
         "has_out_of_stock_items": has_out_of_stock_items,
         "has_exceeded_stock_items": has_exceeded_stock_items,
     }
 
-    return render(
-        request,
-        "cart.html",
-        context
-    )
-
+    return render(request,"cart.html",context)
 
 @login_required
 @transaction.atomic
