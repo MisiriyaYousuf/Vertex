@@ -20,7 +20,7 @@ from .forms import AddressForm
 from . import models
 from .models import UserProfile,Address,OTP
 from products.models import Product
-
+from orders.models import Order
 
 def generate_otp(email):
 
@@ -1280,7 +1280,15 @@ def delete_address(request):
     )
 
     was_default = address.is_default
+    if Order.objects.filter(address=address).exists():
 
+        messages.error(
+            request,
+            "This address cannot be deleted because it is associated with an order."
+        )
+
+        return redirect("users:address")
+    
     address.delete()
 
     if was_default:
